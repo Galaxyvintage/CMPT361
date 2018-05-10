@@ -5,9 +5,8 @@ import line.LineRenderer;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
 
+
 public class ParallelogramLineTest {
-
-
     private final LineRenderer renderer;
     private final Drawable panel;
 

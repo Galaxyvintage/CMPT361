@@ -1,23 +1,21 @@
 package client;
 
+import client.testPages.ParallelogramLineTest;
+import client.testPages.RandomLineTest;
 import client.testPages.StarburstLineTest;
 import geometry.Point2D;
-//import line.AlternatingLineRenderer;
 import line.ExpensiveLineRenderer;
 import line.LineRenderer;
-import polygon.PolygonRenderer;
 import windowing.PageTurner;
+import windowing.drawable.ColoredDrawable;
 import windowing.drawable.Drawable;
 import windowing.drawable.GhostWritingDrawable;
-import windowing.drawable.InvertedYDrawable;
 import windowing.drawable.TranslatingDrawable;
 import windowing.graphics.Dimensions;
 
-/* The followings require implementation (assignment work) */
-import windowing.drawable.ColoredDrawable;
+//import line.AlternatingLineRenderer;
+/* The followings are assignment work */
 //import notProvided.client.testpages.MeshPolygonTest;
-import client.testPages.ParallelogramLineTest;
-//import notProvided.client.testpages.RandomLineTest;
 //import notProvided.client.testpages.RandomPolygonTest;
 //import notProvided.client.testpages.StarburstPolygonTest;
 //import notProvided.line.AntialiasingLineRenderer;
@@ -32,7 +30,7 @@ public class Client implements PageTurner {
 	private static final int ARGB_GREEN = 0xff_00_ff_40;
 	
 	private static final int NUM_PAGES = 4;
-	protected static final double GHOST_COVERAGE = 0.14;
+	private static final double GHOST_COVERAGE = 0.14;
 
 	private static final int NUM_PANELS = 4;
 	private static final Dimensions PANEL_SIZE = new Dimensions(300, 300);
@@ -55,13 +53,13 @@ public class Client implements PageTurner {
 //	private PolygonRenderer polygonRenderer;
 	
 	
-	public Client(Drawable drawable) {
+    Client(Drawable drawable) {
 		this.drawable = drawable;	
 		createDrawables();
 		createRenderers();
 	}
 
-	public void createDrawables() {
+	private void createDrawables() {
 //		image = new InvertedYDrawable(drawable);
 		image = new TranslatingDrawable(drawable, point(0, 0), dimensions(750, 750));
 		image = new ColoredDrawable(image, ARGB_WHITE);
@@ -70,7 +68,7 @@ public class Client implements PageTurner {
 		createGhostPanels();
 	}
 
-	public void createPanels() {
+	private void createPanels() {
 		panels = new Drawable[NUM_PANELS];
 		
 		for(int index = 0; index < NUM_PANELS; index++) {
@@ -118,8 +116,8 @@ public class Client implements PageTurner {
 				 break;
 		case 2:  lineDrawerPage((panel, renderer)->{ new ParallelogramLineTest(panel, renderer); });
 				 break;
-//		case 3:	 lineDrawerPage((panel, renderer)->{ new RandomLineTest(panel, renderer); });
-//				 break;
+		case 3:	 lineDrawerPage((panel, renderer)->{ new RandomLineTest(panel, renderer); });
+				 break;
 //		case 4:  polygonDrawerPage(panels);
 //				 break;
 //		case 0:	 polygonDrawerPage(ghostPanels);		// will be fifth page.  5 == 0 (mod 5)
@@ -131,16 +129,16 @@ public class Client implements PageTurner {
 
 	@FunctionalInterface
 	private interface TestPerformer {
-		public void perform(Drawable drawable, LineRenderer renderer);
+	    void perform(Drawable drawable, LineRenderer renderer);
 	}
 	private void lineDrawerPage(TestPerformer test) {
 //		image.clear();
-
 		for(int panelNumber = 0; panelNumber < panels.length; panelNumber++) {
 			panels[panelNumber].clear();
 			test.perform(panels[panelNumber], lineRenderers[panelNumber]);
 		}
 	}
+
 //	public void polygonDrawerPage(Drawable[] panelArray) {
 //		image.clear();
 //		for(Drawable panel: panels) {		// 'panels' necessary here.  Not panelArray, because clear() uses setPixel.
