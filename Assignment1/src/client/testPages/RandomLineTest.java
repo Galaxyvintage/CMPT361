@@ -26,9 +26,6 @@ public class RandomLineTest {
     private void render() {
         for(int i = 0; i < NUM_LINES; ++i) {
             Line line = lines[i];
-            System.out.println(i);
-            System.out.println(line.x);
-            System.out.println(line.y);
             renderer.drawLine(line.x, line.y, panel);
         }
     }

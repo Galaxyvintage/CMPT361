@@ -4,7 +4,7 @@ import client.testPages.ParallelogramLineTest;
 import client.testPages.RandomLineTest;
 import client.testPages.StarburstLineTest;
 import geometry.Point2D;
-import line.ExpensiveLineRenderer;
+import line.DDALineRenderer;
 import line.LineRenderer;
 import windowing.PageTurner;
 import windowing.drawable.ColoredDrawable;
@@ -93,10 +93,10 @@ public class Client implements PageTurner {
 	private void createRenderers() {
 		
 		lineRenderers = new LineRenderer[4];
-		lineRenderers[0] = ExpensiveLineRenderer.make();
-        lineRenderers[1] = ExpensiveLineRenderer.make();
-        lineRenderers[2] = ExpensiveLineRenderer.make();
-        lineRenderers[3] = ExpensiveLineRenderer.make();
+		lineRenderers[0] = DDALineRenderer.make();
+        lineRenderers[1] = DDALineRenderer.make();
+        lineRenderers[2] = DDALineRenderer.make();
+        lineRenderers[3] = DDALineRenderer.make();
 
 //      lineRenderers[0] = BresenhamLineRenderer.make();
 //		lineRenderers[1] = DDALineRenderer.make();
