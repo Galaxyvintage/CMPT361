@@ -11,7 +11,7 @@ public class StarburstLineTest {
 	
 	private final LineRenderer renderer;
 	private final Drawable panel;
-	Vertex3D center;
+	private Vertex3D center;
 
 	public StarburstLineTest(Drawable panel, LineRenderer renderer) {
 		this.panel = panel;
@@ -29,7 +29,6 @@ public class StarburstLineTest {
 		for(int ray = 0; ray < NUM_RAYS; ray++) {
 			Vertex3D radialPoint = radialPoint(radius, angle);
 			renderer.drawLine(center, radialPoint, panel);
-			
 			angle = angle + angleDifference;
 		}
 	}

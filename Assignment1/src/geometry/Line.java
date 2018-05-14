@@ -1,5 +1,6 @@
 package geometry;
 
+
 public class Line {
     public Vertex3D x;
     public Vertex3D y;

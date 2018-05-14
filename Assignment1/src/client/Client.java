@@ -1,9 +1,12 @@
 package client;
 
+
 import client.testPages.ParallelogramLineTest;
 import client.testPages.RandomLineTest;
 import client.testPages.StarburstLineTest;
 import geometry.Point2D;
+import line.AlternatingLineRenderer;
+import line.BresenhamLineRenderer;
 import line.DDALineRenderer;
 import line.LineRenderer;
 import windowing.PageTurner;
@@ -13,14 +16,10 @@ import windowing.drawable.GhostWritingDrawable;
 import windowing.drawable.TranslatingDrawable;
 import windowing.graphics.Dimensions;
 
-//import line.AlternatingLineRenderer;
-/* The followings are assignment work */
 //import notProvided.client.testpages.MeshPolygonTest;
 //import notProvided.client.testpages.RandomPolygonTest;
 //import notProvided.client.testpages.StarburstPolygonTest;
 //import notProvided.line.AntialiasingLineRenderer;
-//import notProvided.line.BresenhamLineRenderer;
-//import notProvided.line.DDALineRenderer;
 //import notProvided.polygon.FilledPolygonRenderer;
 //import notProvided.polygon.WireframePolygonRenderer;
 
@@ -35,10 +34,11 @@ public class Client implements PageTurner {
 	private static final int NUM_PANELS = 4;
 	private static final Dimensions PANEL_SIZE = new Dimensions(300, 300);
 	private static final Point2D[] lowCornersOfPanels = {
-			new Point2D( 50, 400),
+            new Point2D( 50,  50),
+            new Point2D(400,  50),
+	        new Point2D( 50, 400),
 			new Point2D(400, 400),
-			new Point2D( 50,  50),
-			new Point2D(400,  50),
+
 	};
 	
 	private final Drawable drawable;
@@ -51,8 +51,7 @@ public class Client implements PageTurner {
 	
 	private LineRenderer lineRenderers[];
 //	private PolygonRenderer polygonRenderer;
-	
-	
+
     Client(Drawable drawable) {
 		this.drawable = drawable;	
 		createDrawables();
@@ -91,18 +90,13 @@ public class Client implements PageTurner {
 		return new Dimensions(x, y);
 	}
 	private void createRenderers() {
-		
 		lineRenderers = new LineRenderer[4];
 		lineRenderers[0] = DDALineRenderer.make();
-        lineRenderers[1] = DDALineRenderer.make();
-        lineRenderers[2] = DDALineRenderer.make();
-        lineRenderers[3] = DDALineRenderer.make();
+		lineRenderers[1] = BresenhamLineRenderer.make();
+		lineRenderers[2] = AlternatingLineRenderer.make();
+		lineRenderers[3] = DDALineRenderer.make(); // TODO: Antialiasing
 
-//      lineRenderers[0] = BresenhamLineRenderer.make();
-//		lineRenderers[1] = DDALineRenderer.make();
-//		lineRenderers[2] = AlternatingLineRenderer.make();
 //		lineRenderers[3] = AntialiasingLineRenderer.make();
-		
 //		polygonRenderer = FilledPolygonRenderer.make();
 	}
 	
@@ -112,11 +106,11 @@ public class Client implements PageTurner {
 		pageNumber = (pageNumber + 1) % NUM_PAGES;
 		
 		switch(pageNumber) {
-		case 1:  lineDrawerPage((panel, renderer)->{ new StarburstLineTest(panel, renderer); });
+		case 1:  lineDrawerPage(StarburstLineTest::new);
 				 break;
-		case 2:  lineDrawerPage((panel, renderer)->{ new ParallelogramLineTest(panel, renderer); });
+		case 2:  lineDrawerPage(ParallelogramLineTest::new);
 				 break;
-		case 3:	 lineDrawerPage((panel, renderer)->{ new RandomLineTest(panel, renderer); });
+		case 3:	 lineDrawerPage(RandomLineTest::new);
 				 break;
 //		case 4:  polygonDrawerPage(panels);
 //				 break;

@@ -1,8 +1,6 @@
 package line;
 
 import geometry.Vertex3D;
-import notProvided.line.BresenhamLineRenderer;
-import notProvided.line.DDALineRenderer;
 import windowing.drawable.Drawable;
 
 // Because we have the interface LineRenderer, this class is
@@ -14,13 +12,13 @@ public class AlternatingLineRenderer implements LineRenderer {
 
 	private LineRenderer secondRenderer = DDALineRenderer.make();
 	private LineRenderer firstRenderer = BresenhamLineRenderer.make();
-	
+
 	private int parity = 0;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see client.LineRenderer#drawLine(client.Vertex2D, client.Vertex2D, windowing.Drawable)
-	 * 
+	 *
 	 * @pre: p2.x >= p1.x && p2.y >= p1.y
 	 */
 	@Override
@@ -38,5 +36,5 @@ public class AlternatingLineRenderer implements LineRenderer {
 	public static LineRenderer make() {
 		return new AlternatingLineRenderer();
 	}
-
 }
+
