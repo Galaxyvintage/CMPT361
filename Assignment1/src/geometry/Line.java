@@ -2,11 +2,11 @@ package geometry;
 
 
 public class Line {
-    public Vertex3D x;
-    public Vertex3D y;
+    public Vertex3D p1;
+    public Vertex3D p2;
 
-    public Line(Vertex3D x, Vertex3D y) {
-        this.x = x;
-        this.y = y;
+    public Line(Vertex3D p1, Vertex3D p2) {
+        this.p1 = p1;
+        this.p2 = p2;
     }
 }

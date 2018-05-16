@@ -11,7 +11,6 @@ import java.util.Random;
 
 public class RandomLineTest {
     private static final int PIXEL_RANGE = 300;
-    private static final int COLOR_RANGE = 255;
     private static final int NUM_LINES = 30;
     private static final Line[] lines = createRandomLines();
 
@@ -27,7 +26,7 @@ public class RandomLineTest {
     private void render() {
         for(int i = 0; i < NUM_LINES; ++i) {
             Line line = lines[i];
-            renderer.drawLine(line.x, line.y, panel);
+            renderer.drawLine(line.p1, line.p2, panel);
         }
     }
 

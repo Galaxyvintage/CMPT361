@@ -18,16 +18,9 @@ public class DDALineRenderer implements LineRenderer {
         System.out.println("x: " + x);
         System.out.println("y: " + y);
 
-        double steps ;
-        if(Math.abs(deltaX) > Math.abs(deltaY)) {
-            steps = Math.abs(deltaX);
-        } else {
-            steps = Math.abs(deltaY);
-        }
-
         // This can handle vertical or horizontal lines
-        double xIncrement = deltaX/steps;
-        double yIncrement = deltaY/steps;
+        double xIncrement = deltaX/deltaX;
+        double yIncrement = deltaY/deltaX;
 
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);

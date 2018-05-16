@@ -5,10 +5,7 @@ import client.testPages.ParallelogramLineTest;
 import client.testPages.RandomLineTest;
 import client.testPages.StarburstLineTest;
 import geometry.Point2D;
-import line.AlternatingLineRenderer;
-import line.BresenhamLineRenderer;
-import line.DDALineRenderer;
-import line.LineRenderer;
+import line.*;
 import windowing.PageTurner;
 import windowing.drawable.ColoredDrawable;
 import windowing.drawable.Drawable;
@@ -59,7 +56,6 @@ public class Client implements PageTurner {
 	}
 
 	private void createDrawables() {
-//		image = new InvertedYDrawable(drawable);
 		image = new TranslatingDrawable(drawable, point(0, 0), dimensions(750, 750));
 		image = new ColoredDrawable(image, ARGB_WHITE);
 		
@@ -94,7 +90,7 @@ public class Client implements PageTurner {
 		lineRenderers[0] = DDALineRenderer.make();
 		lineRenderers[1] = BresenhamLineRenderer.make();
 		lineRenderers[2] = AlternatingLineRenderer.make();
-		lineRenderers[3] = DDALineRenderer.make(); // TODO: Antialiasing
+		lineRenderers[3] = AntialiasingLineRenderer.make();
 
 //		lineRenderers[3] = AntialiasingLineRenderer.make();
 //		polygonRenderer = FilledPolygonRenderer.make();
@@ -126,7 +122,7 @@ public class Client implements PageTurner {
 	    void perform(Drawable drawable, LineRenderer renderer);
 	}
 	private void lineDrawerPage(TestPerformer test) {
-//		image.clear();
+//    	image.fill(Color.WHITE.asARGB(), 0.0);
 		for(int panelNumber = 0; panelNumber < panels.length; panelNumber++) {
 			panels[panelNumber].clear();
 			test.perform(panels[panelNumber], lineRenderers[panelNumber]);
