@@ -20,6 +20,8 @@ public class AntialiasingLineRenderer implements LineRenderer {
     @Override
     public void drawLine(Vertex3D p1, Vertex3D p2, Drawable drawable) {
         Line l = new Line(p1, p2);
+        int argbColor = p1.getColor().asARGB();
+
         double deltaX = p2.getX() - p1.getX();
         double deltaY = p2.getY() - p1.getY();
 
@@ -28,33 +30,19 @@ public class AntialiasingLineRenderer implements LineRenderer {
 //        System.out.println("x: " + x);
 //        System.out.println("y: " + y);
 
-
         double xIncrement = deltaX/deltaX;
         double yIncrement = deltaY/deltaX;
 
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);
 
-
-        int argbColor = p1.getColor().asARGB();
-        double ratio;
-        ratio = sampleArea(x_round, y_round, l);
-        drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, ratio);
-        for (int i = SAMPLE_BEGIN; i <= SAMPLE_END; i++) {
-            ratio = sampleArea(x_round, y_round + i , l);
-            drawable.setPixelWithCoverage(x_round, y_round + i, 0.0, argbColor, ratio);
-        }
-
+        drawPixels(x_round, y_round, argbColor, l, drawable);
         for(int k = 0; k <= deltaX; k++) {
             x += xIncrement;
             y += yIncrement;
             x_round = (int)Math.round(x);
             y_round = (int)Math.round(y);
-
-            for (int i = SAMPLE_BEGIN; i <= SAMPLE_END; i++) {
-                ratio = sampleArea(x_round, y_round + i, l);
-                drawable.setPixelWithCoverage(x_round, y_round + i, 0.0, argbColor, ratio);
-            }
+            drawPixels(x_round, y_round, argbColor, l, drawable);
         }
     }
 
@@ -98,5 +86,14 @@ public class AntialiasingLineRenderer implements LineRenderer {
         }
         System.out.println("ret: " + ret);
         return ret;
+    }
+
+    // It draws SAMPLE_END - SAMPLE_BEGIN amount of pixels centered at (x, y)
+    private void drawPixels(int x, int y, int argbColor, Line l, Drawable drawable) {
+        double coverage;
+        for (int i = SAMPLE_BEGIN; i <= SAMPLE_END; i++) {
+            coverage = sampleArea(x, y + i, l);
+            drawable.setPixelWithCoverage(x, y + i, 0.0, argbColor, coverage);
+        }
     }
 }

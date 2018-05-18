@@ -1,11 +1,11 @@
 package client;
 
 
-import client.testPages.ParallelogramLineTest;
-import client.testPages.RandomLineTest;
-import client.testPages.StarburstLineTest;
+import client.testPages.*;
 import geometry.Point2D;
 import line.*;
+import polygon.FilledPolygonRenderer;
+import polygon.PolygonRenderer;
 import windowing.PageTurner;
 import windowing.drawable.ColoredDrawable;
 import windowing.drawable.Drawable;
@@ -23,9 +23,7 @@ import windowing.graphics.Dimensions;
 
 public class Client implements PageTurner {
 	private static final int ARGB_WHITE = 0xff_ff_ff_ff;
-	private static final int ARGB_GREEN = 0xff_00_ff_40;
-	
-	private static final int NUM_PAGES = 4;
+	private static final int NUM_PAGES = 5;
 	private static final double GHOST_COVERAGE = 0.14;
 
 	private static final int NUM_PANELS = 4;
@@ -35,7 +33,6 @@ public class Client implements PageTurner {
             new Point2D(400,  50),
 	        new Point2D( 50, 400),
 			new Point2D(400, 400),
-
 	};
 	
 	private final Drawable drawable;
@@ -44,10 +41,9 @@ public class Client implements PageTurner {
 	private Drawable image;
 	private Drawable[] panels;
 	private Drawable[] ghostPanels;					// use transparency and write only white
-	private Drawable largePanel;
-	
+
 	private LineRenderer lineRenderers[];
-//	private PolygonRenderer polygonRenderer;
+	private PolygonRenderer polygonRenderer;
 
     Client(Drawable drawable) {
 		this.drawable = drawable;	
@@ -79,6 +75,7 @@ public class Client implements PageTurner {
 			ghostPanels[index] = new GhostWritingDrawable(drawable, GHOST_COVERAGE);
 		}
 	}
+
 	private Point2D point(int x, int y) {
 		return new Point2D(x, y);
 	}	
@@ -91,9 +88,8 @@ public class Client implements PageTurner {
 		lineRenderers[1] = BresenhamLineRenderer.make();
 		lineRenderers[2] = AlternatingLineRenderer.make();
 		lineRenderers[3] = AntialiasingLineRenderer.make();
+		polygonRenderer = FilledPolygonRenderer.make();
 
-//		lineRenderers[3] = AntialiasingLineRenderer.make();
-//		polygonRenderer = FilledPolygonRenderer.make();
 	}
 	
 	@Override
@@ -108,10 +104,10 @@ public class Client implements PageTurner {
 				 break;
 		case 3:	 lineDrawerPage(RandomLineTest::new);
 				 break;
-//		case 4:  polygonDrawerPage(panels);
-//				 break;
-//		case 0:	 polygonDrawerPage(ghostPanels);		// will be fifth page.  5 == 0 (mod 5)
-//				 break;
+		case 4:  polygonDrawerPage(panels);
+				 break;
+		case 0:	 polygonDrawerPage(ghostPanels);		// will be fifth page.  5 == 0 (mod 5)
+				 break;
 		default:
 		    break;
 		}
@@ -122,21 +118,21 @@ public class Client implements PageTurner {
 	    void perform(Drawable drawable, LineRenderer renderer);
 	}
 	private void lineDrawerPage(TestPerformer test) {
-//    	image.fill(Color.WHITE.asARGB(), 0.0);
+    	image.clear();
 		for(int panelNumber = 0; panelNumber < panels.length; panelNumber++) {
 			panels[panelNumber].clear();
 			test.perform(panels[panelNumber], lineRenderers[panelNumber]);
 		}
 	}
 
-//	public void polygonDrawerPage(Drawable[] panelArray) {
-//		image.clear();
-//		for(Drawable panel: panels) {		// 'panels' necessary here.  Not panelArray, because clear() uses setPixel.
-//			panel.clear();
-//		}
-//		new StarburstPolygonTest(panelArray[0], polygonRenderer);
-//		new MeshPolygonTest(panelArray[1], polygonRenderer, MeshPolygonTest.NO_PERTURBATION);
-//		new MeshPolygonTest(panelArray[2], polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
+	public void polygonDrawerPage(Drawable[] panelArray) {
+		image.clear();
+		for(Drawable panel: panels) {		// 'panels' necessary here.  Not panelArray, because clear() uses setPixel.
+			panel.clear();
+		}
+		new StarburstPolygonTest(panelArray[0], polygonRenderer);
+		new MeshPolygonTest(panelArray[1], polygonRenderer, MeshPolygonTest.NO_PERTURBATION);
+		new MeshPolygonTest(panelArray[2], polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
 //		new RandomPolygonTest(panelArray[3], polygonRenderer);
-//	}
+	}
 }

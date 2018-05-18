@@ -18,21 +18,30 @@ public class DDALineRenderer implements LineRenderer {
         System.out.println("x: " + x);
         System.out.println("y: " + y);
 
-        // This can handle vertical or horizontal lines
-        double xIncrement = deltaX/deltaX;
-        double yIncrement = deltaY/deltaX;
-
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);
         int argbColor = p1.getColor().asARGB();
         drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, COVERAGE);
-        for(int k = 0; k <= deltaX; k++) {
-            x += xIncrement;
-            y += yIncrement;
 
-            x_round = (int)Math.round(x);
-            y_round = (int)Math.round(y);
-            drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, COVERAGE);
+        double steps;
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            steps = Math.abs(deltaX);
+        }
+        else {
+            steps = Math.abs(deltaY);
+        }
+
+        if(steps != 0) {
+            double xIncrement = deltaX / steps;
+            double yIncrement = deltaY / steps;
+            for (int k = 0; k < steps; k++) {
+                x += xIncrement;
+                y += yIncrement;
+
+                x_round = (int) Math.round(x);
+                y_round = (int) Math.round(y);
+                drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, COVERAGE);
+            }
         }
     }
 

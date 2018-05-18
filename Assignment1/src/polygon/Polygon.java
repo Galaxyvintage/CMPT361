@@ -1,10 +1,10 @@
 package polygon;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import geometry.Vertex;
 import geometry.Vertex3D;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Polygon extends Chain {
 	private static final int INDEX_STEP_FOR_CLOCKWISE = -1;
@@ -18,7 +18,9 @@ public class Polygon extends Chain {
 	}
 	
 	// the EmptyMarker is to distinguish this constructor from the one above (when there are no initial vertices).
-	private enum EmptyMarker { MARKER; };
+	private enum EmptyMarker { MARKER
+	}
+
 	private Polygon(EmptyMarker ignored) {
 		super();
 	}
@@ -30,7 +32,7 @@ public class Polygon extends Chain {
 	public static Polygon make(Vertex3D... initialVertices) {
 		return new Polygon(initialVertices);
 	}
-	public static Polygon makeEnsuringClockwise(Vertex3D... initialVertices) {
+	public static Polygon makeEnsuringCounterClockwise(Vertex3D... initialVertices) {
 		if(isClockwise(initialVertices[0], initialVertices[1], initialVertices[2])) {
 			return new Polygon(reverseArray(initialVertices));
 		}
