@@ -68,7 +68,7 @@ public class AntialiasingLineRenderer implements LineRenderer {
 
     private double sampleArea(double x, double y, Line l) {
         double d = findPointLineDistance(x, y, l);
-        System.out.println("d: " + d);
+
         double d_abs = Math.abs(d);
         double theta = Math.acos(d_abs / RADIUS);
 
@@ -84,7 +84,6 @@ public class AntialiasingLineRenderer implements LineRenderer {
         } else {
             ret = 1.0 - ((triangleArea + wedgeArea) / circleArea);
         }
-        System.out.println("ret: " + ret);
         return ret;
     }
 

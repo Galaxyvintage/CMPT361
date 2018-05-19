@@ -15,8 +15,6 @@ public class DDALineRenderer implements LineRenderer {
 
         double x = p1.getX();
         double y = p1.getY();
-        System.out.println("x: " + x);
-        System.out.println("y: " + y);
 
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);

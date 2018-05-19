@@ -11,7 +11,7 @@ import java.util.Random;
 public class MeshPolygonTest {
     public static final int NO_PERTURBATION = -1;
     public static final int USE_PERTURBATION = 1;
-    private static final double MARGIN_PERCENT= 0.05;
+    private static final double MARGIN_PERCENT= 0.04;
     private static final int NUM_POINT = 10;
     private static final int[] SHIFT_RANGE = {-12, 12};
     private static final int[][] X_SHIFT = createRandomShift();
@@ -60,18 +60,12 @@ public class MeshPolygonTest {
             y += squareHeight;
         }
 
-
         Color color;
         Vertex3D a, b, c, d;
 
         for(int i = 0; i < NUM_POINT - 1; i++) {
             for(int j = 0; j < NUM_POINT - 1; j++) {
                 //connect (min x, min y) to (max x, max y)
-                a = vertices[i][j];
-                b = vertices[i][j+1];
-                c = vertices[i+1][j];
-                d = vertices[i+1][j+1];
-
 
                 color = Color.random(rnd);
                 a = vertices[i][j].replaceColor(color);

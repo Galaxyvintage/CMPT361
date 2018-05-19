@@ -32,8 +32,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         int MidVertexSide;
         double LSlope;
         double RSlope;
-        double LX = LTopVertex.getX();
-        double RX = RTopVertex.getX();
+        double LX = LTopVertex.getIntX();
+        double RX = RTopVertex.getIntX();
 
         if (LLength > RLength) {
             MidVertexSide = LEFT;
@@ -43,79 +43,70 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             MidVertex = RChain.get(SECOND_VERTEX);
         }
 
+        boolean isTopHorizontal = false;
         if(MidVertexSide == LEFT) {
-            double LDeltaX = MidVertex.getX() - LTopVertex.getX();
-            double LDeltaY = MidVertex.getY() - LTopVertex.getY();
-            double RDeltaX = RBotVertex.getX() - RTopVertex.getX();
-            double RDeltaY = RBotVertex.getY() - RTopVertex.getY();
-            if(LDeltaY == 0) {
+            double LDeltaX = MidVertex.getIntX() - LTopVertex.getIntX();
+            double LDeltaY = MidVertex.getIntY() - LTopVertex.getIntY();
+            double RDeltaX = RBotVertex.getIntX() - RTopVertex.getIntX();
+            double RDeltaY = RBotVertex.getIntY() - RTopVertex.getIntY();
+
+            if((int)LDeltaY == 0) {
                 LSlope = 0;
+                isTopHorizontal = true;
             } else {
                 LSlope = LDeltaX / LDeltaY;
             }
-
-            if(RDeltaY == 0) {
-                RSlope = 0;
-            } else {
-                RSlope = RDeltaX / RDeltaY;
-            }
+            RSlope = RDeltaX / RDeltaY;
         } else {
-            double LDeltaX = LBotVertex.getX() - LTopVertex.getX();
-            double LDeltaY = LBotVertex.getY() - LTopVertex.getY();
-            double RDeltaX = MidVertex.getX() - RTopVertex.getX();
-            double RDeltaY = MidVertex.getY() - RTopVertex.getY();
+            double LDeltaX = LBotVertex.getIntX() - LTopVertex.getIntX();
+            double LDeltaY = LBotVertex.getIntY() - LTopVertex.getIntY();
+            double RDeltaX = MidVertex.getIntX() - RTopVertex.getIntX();
+            double RDeltaY = MidVertex.getIntY() - RTopVertex.getIntY();
 
-            if(LDeltaY == 0) {
-                LSlope = 0;
-            } else {
-                LSlope = LDeltaX / LDeltaY;
-            }
-
-            if(RDeltaY == 0) {
+            if((int)RDeltaY == 0) {
                 RSlope = 0;
+                isTopHorizontal = true;
             } else {
                 RSlope = RDeltaX / RDeltaY;
             }
+            LSlope = LDeltaX / LDeltaY;
         }
 
         int TopY = LTopVertex.getIntY();
         int BotY = LBotVertex.getIntY();
         int MidY = MidVertex.getIntY();
-
         int flag = 0;
-        for(int i = TopY; i > BotY; i--) {
-            if(i <= MidY && flag == 0) {
+        for(int j = TopY; j >= BotY; j--) {
+
+            if(j == MidY && flag == 0) {
                 flag = 1;
                 if(MidVertexSide == LEFT) {
-                    double LDeltaX = LBotVertex.getX() - MidVertex.getX();
-                    double LDeltaY = LBotVertex.getY() - MidVertex.getY();
-                    LX = MidVertex.getX();
+                    double LDeltaX = LBotVertex.getIntX() - MidVertex.getIntX();
+                    double LDeltaY = LBotVertex.getIntY() - MidVertex.getIntY();
+                    LX = MidVertex.getIntX();
+                    LSlope = LDeltaX / LDeltaY;
 
-                    if(LDeltaY == 0) {
-                        LSlope = 0;
-                    } else {
-                        LSlope = LDeltaX / LDeltaY;
-                    }
                 } else {
-                    double RDeltaX = RBotVertex.getX() - MidVertex.getX();
-                    double RDeltaY = RBotVertex.getY() - MidVertex.getY();
-                    RX = MidVertex.getX();
-                    if(RDeltaY == 0) {
-                        RSlope = 0;
-                    } else {
-                        RSlope = RDeltaX / RDeltaY;
-                    }
+                    double RDeltaX = RBotVertex.getIntX() - MidVertex.getIntX();
+                    double RDeltaY = RBotVertex.getIntY() - MidVertex.getIntY();
+                    RX = MidVertex.getIntX();
+                    RSlope = RDeltaX / RDeltaY;
                 }
             }
 
             int X1 = (int)Math.round(LX);
             int X2 = (int)Math.round(RX);
+
+            for(int i = X1; i <= X2 - 1; i++) {
+                if(isTopHorizontal && j == TopY) {
+                    // leaving horizontal top
+                    break;
+                }
+                drawable.setPixelWithCoverage(i, j , 0, color.asARGB(), COVERAGE);
+            }
+
             LX -= LSlope;
             RX -= RSlope;
-
-            for(int j = X1; j <= X2 - 1; j++) {
-                drawable.setPixelWithCoverage(j, i , 0, color.asARGB(), COVERAGE);
-            }
         }
     }
 }

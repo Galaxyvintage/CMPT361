@@ -35,6 +35,7 @@ public class StarburstPolygonTest {
         double angleDifference = (2.0 * Math.PI) / NUM_RAYS;
         double angle = 0.0;
 
+
         Random rnd = new Random();
         for (int i = 0; i < NUM_RAYS; i++) {
             Vertex3D radialPoint1 = radialPoint(radius, angle);
