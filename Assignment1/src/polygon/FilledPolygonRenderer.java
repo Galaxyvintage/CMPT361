@@ -75,17 +75,14 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         int TopY = LTopVertex.getIntY();
         int BotY = LBotVertex.getIntY();
         int MidY = MidVertex.getIntY();
-        int flag = 0;
-        for(int j = TopY; j >= BotY; j--) {
 
-            if(j == MidY && flag == 0) {
-                flag = 1;
+        for(int j = TopY; j >= BotY; j--) {
+            if(j == MidY) {
                 if(MidVertexSide == LEFT) {
                     double LDeltaX = LBotVertex.getIntX() - MidVertex.getIntX();
                     double LDeltaY = LBotVertex.getIntY() - MidVertex.getIntY();
                     LX = MidVertex.getIntX();
                     LSlope = LDeltaX / LDeltaY;
-
                 } else {
                     double RDeltaX = RBotVertex.getIntX() - MidVertex.getIntX();
                     double RDeltaY = RBotVertex.getIntY() - MidVertex.getIntY();
@@ -99,12 +96,11 @@ public class FilledPolygonRenderer implements PolygonRenderer {
 
             for(int i = X1; i <= X2 - 1; i++) {
                 if(isTopHorizontal && j == TopY) {
-                    // leaving horizontal top
+                    // Don't render horizontal top
                     break;
                 }
                 drawable.setPixelWithCoverage(i, j , 0, color.asARGB(), COVERAGE);
             }
-
             LX -= LSlope;
             RX -= RSlope;
         }
