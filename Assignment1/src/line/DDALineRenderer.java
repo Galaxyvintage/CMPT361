@@ -3,7 +3,7 @@ package line;
 import geometry.Vertex3D;
 import windowing.drawable.Drawable;
 
-public class DDALineRenderer implements LineRenderer {
+public class  DDALineRenderer implements LineRenderer {
     private static final int COVERAGE = 1;
     // use the static factory make() instead of constructor.
     private DDALineRenderer() {}
