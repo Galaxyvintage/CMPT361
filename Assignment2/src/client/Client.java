@@ -6,6 +6,7 @@ import geometry.Point2D;
 import line.*;
 import polygon.FilledPolygonRenderer;
 import polygon.PolygonRenderer;
+import polygon.WireFrameRenderer;
 import windowing.PageTurner;
 import windowing.drawable.ColoredDrawable;
 import windowing.drawable.Drawable;
@@ -31,11 +32,14 @@ public class Client implements PageTurner {
 //	private Drawable depthCueingDrawable;
 //
 //	private LineRenderer lineRenderers[];
-//	private PolygonRenderer polygonRenderer;
+	private PolygonRenderer wireframeRenderer;
+	private LineRenderer lineRenderer;
 
     Client(Drawable drawable) {
 		this.drawable = drawable;	
 		createDrawables();
+		lineRenderer = DDALineRenderer.make();
+		wireframeRenderer = WireFrameRenderer.make(lineRenderer);
 	}
 
 	private void createDrawables() {
@@ -62,8 +66,8 @@ public class Client implements PageTurner {
 		fullPanel.clear();
 
 		switch(pageNumber) {
-//			case 1:  new MeshPolygonTest(fullPanel, wireframeRenderer, MeshPolygonTest.USE_PERTURBATION);
-//				break;
+			case 1:  new MeshPolygonTest(fullPanel, wireframeRenderer, MeshPolygonTest.USE_PERTURBATION);
+				break;
 //			case 2:  new MeshPolygonTest(fullPanel, polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
 //				break;
 //			case 3:	 centeredTriangleTest(fullPanel, polygonRenderer);
@@ -93,7 +97,6 @@ public class Client implements PageTurner {
 //				interpreter = new SimpInterpreter("page8.simp", depthCueingDrawable, renderers);
 //				interpreter.interpret();
 //				break;
-//
 			default: defaultPage();
 				break;
 		}
