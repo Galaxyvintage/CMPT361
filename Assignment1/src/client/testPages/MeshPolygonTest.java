@@ -3,6 +3,7 @@ package client.testPages;
 import geometry.Vertex3D;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
+import polygon.Shader;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
 
@@ -60,30 +61,24 @@ public class MeshPolygonTest {
             y += squareHeight;
         }
 
-        Color color;
         Vertex3D a, b, c, d;
-
+        Shader s = (oldColor) -> Color.random(rnd);
         for(int i = 0; i < NUM_POINT - 1; i++) {
             for(int j = 0; j < NUM_POINT - 1; j++) {
                 //connect (min x, min y) to (max x, max y)
-
-                color = Color.random(rnd);
-                a = vertices[i][j].replaceColor(color);
-                b = vertices[i+1][j].replaceColor(color);
-                d = vertices[i+1][j+1].replaceColor(color);
-
                 // Polygon abd
+                a = vertices[i][j];
+                b = vertices[i+1][j];
+                d = vertices[i+1][j+1];
                 Polygon p1 = Polygon.makeEnsuringCounterClockwise(a, b, d);
-                renderer.drawPolygon(p1, panel);
-
-                color = Color.random(rnd);
-                a = vertices[i][j].replaceColor(color);
-                c = vertices[i][j+1].replaceColor(color);
-                d = vertices[i+1][j+1].replaceColor(color);
+                renderer.drawPolygon(p1, panel, s);
 
                 // Polygon acd
+                a = vertices[i][j];
+                c = vertices[i][j+1];
+                d = vertices[i+1][j+1];
                 Polygon p2 = Polygon.makeEnsuringCounterClockwise(a, c, d);
-                renderer.drawPolygon(p2, panel);
+                renderer.drawPolygon(p2, panel, s);
             }
         }
     }

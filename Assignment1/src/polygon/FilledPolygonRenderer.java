@@ -28,7 +28,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         Vertex3D RBotVertex = RChain.get(RLength - 1);
         Vertex3D MidVertex;
 
-        Color color = LBotVertex.getColor();
+        Color color = vertexShader.shade(LBotVertex.getColor());
+
         int MidVertexSide;
         double LSlope;
         double RSlope;

@@ -1,5 +1,3 @@
-package notProvided.client.interpreter.copy;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
