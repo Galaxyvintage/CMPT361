@@ -4,6 +4,7 @@ Deadline: May 31 2018
 #### Requirement
 * Java
 
+
 #### Finished
 ###### LineRenderer
 * DDA
@@ -26,3 +27,6 @@ Deadline: May 31 2018
 
 #### Non Finished
 Everything is finished...
+
+#### Note
+* The origin is the top left corner...
