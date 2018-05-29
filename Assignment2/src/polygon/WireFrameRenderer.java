@@ -7,14 +7,7 @@ import windowing.drawable.Drawable;
 
 
 public class WireFrameRenderer implements PolygonRenderer {
-    private static final int FIRST_VERTEX = 0;
-    private static final int SECOND_VERTEX = 1;
-    private static final int LEFT = -1;
-    private static final int RIGHT = 1;
-    private static final int COVERAGE = 1;
-
     private LineRenderer renderer;
-
     private WireFrameRenderer(LineRenderer renderer) {
         this.renderer = renderer;
     }

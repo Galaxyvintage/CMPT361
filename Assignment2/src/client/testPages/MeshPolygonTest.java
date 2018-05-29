@@ -37,7 +37,7 @@ public class MeshPolygonTest {
         int squareHeight = (panelHeight - hMargin * 2) / (NUM_POINT - 1);
         int squareWidth = (panelWidth - wMargin * 2) / (NUM_POINT - 1);
 
-        Random rnd = new Random();
+
         Vertex3D[][] vertices = new Vertex3D[NUM_POINT][NUM_POINT];
 
         int x;
@@ -50,12 +50,11 @@ public class MeshPolygonTest {
                 int x_rnd = 0;
                 int y_rnd = 0;
                 if(perturbation == USE_PERTURBATION) {
-//                    x_rnd = rnd.nextInt(SHIFT_RANGE[1] - SHIFT_RANGE[0] + 1) + SHIFT_RANGE[0];
-//                    y_rnd = rnd.nextInt(SHIFT_RANGE[1] - SHIFT_RANGE[0] + 1) + SHIFT_RANGE[0];
                     x_rnd = X_SHIFT[i][j];
                     y_rnd = Y_SHIFT[i][j];
                 }
-                vertices[i][j] = new Vertex3D(x + x_rnd,y + y_rnd, 0, Color.WHITE);
+                Random rnd = new Random();
+                vertices[i][j] = new Vertex3D(x + x_rnd,y + y_rnd, 0, Color.random(rnd));
                 x += squareWidth;
             }
             y += squareHeight;
@@ -63,7 +62,6 @@ public class MeshPolygonTest {
 
 
         Vertex3D a, b, c, d;
-        Shader s = (oldColor) -> Color.random(rnd);
         for(int i = 0; i < NUM_POINT - 1; i++) {
             for(int j = 0; j < NUM_POINT - 1; j++) {
                 //connect (min x, min y) to (max x, max y)
@@ -73,7 +71,7 @@ public class MeshPolygonTest {
 
                 // Polygon abd
                 Polygon p1 = Polygon.makeEnsuringCounterClockwise(a, b, d);
-                renderer.drawPolygon(p1, panel, s);
+                renderer.drawPolygon(p1, panel);
 
                 a = vertices[i][j];
                 c = vertices[i][j+1];
@@ -81,7 +79,7 @@ public class MeshPolygonTest {
 
                 // Polygon acd
                 Polygon p2 = Polygon.makeEnsuringCounterClockwise(a, c, d);
-                renderer.drawPolygon(p2, panel, s);
+                renderer.drawPolygon(p2, panel);
             }
         }
     }
