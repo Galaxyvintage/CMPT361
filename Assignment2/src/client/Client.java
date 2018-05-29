@@ -30,16 +30,19 @@ public class Client implements PageTurner {
 	private Drawable image;
 	private Drawable fullPanel;
 //	private Drawable depthCueingDrawable;
-//
-//	private LineRenderer lineRenderers[];
+
+
+    private LineRenderer lineRenderer;
 	private PolygonRenderer wireframeRenderer;
-	private LineRenderer lineRenderer;
+	private PolygonRenderer polygonRenderer;
+
 
     Client(Drawable drawable) {
 		this.drawable = drawable;	
 		createDrawables();
 		lineRenderer = DDALineRenderer.make();
 		wireframeRenderer = WireFrameRenderer.make(lineRenderer);
+        polygonRenderer = FilledPolygonRenderer.make();
 	}
 
 	private void createDrawables() {
@@ -68,8 +71,8 @@ public class Client implements PageTurner {
 		switch(pageNumber) {
 			case 1:  new MeshPolygonTest(fullPanel, wireframeRenderer, MeshPolygonTest.USE_PERTURBATION);
 				break;
-//			case 2:  new MeshPolygonTest(fullPanel, polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
-//				break;
+			case 2:  new MeshPolygonTest(fullPanel, polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
+				break;
 //			case 3:	 centeredTriangleTest(fullPanel, polygonRenderer);
 //				break;
 //
@@ -126,7 +129,7 @@ public class Client implements PageTurner {
 //		new RandomPolygonTest(panelArray[3], polygonRenderer);
 //	}
 
-    public void defaultPage() {
+    private void defaultPage() {
         image.clear();
         fullPanel.clear();
     }
