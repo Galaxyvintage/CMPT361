@@ -21,7 +21,6 @@ public class DDALineRenderer implements LineRenderer {
         double deltaG = p2.getColor().getG() - p1.getColor().getG();
         double deltaB = p2.getColor().getB() - p1.getColor().getB();
 
-
         double x = p1.getX();
         double y = p1.getY();
 
@@ -29,12 +28,8 @@ public class DDALineRenderer implements LineRenderer {
         double g = p1.getColor().getG();
         double b = p1.getColor().getR();
 
-
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);
-        int r_round = (int)Math.round(r);
-        int g_round = (int)Math.round(g);
-        int b_round = (int)Math.round(b);
         int argbColor = new Color(r, g, b).asARGB();
         drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, COVERAGE);
 

@@ -7,7 +7,7 @@ Deadline: May 31 2018
 #### How to run
 * In `/src`, run the following step in order:
     1. `javac ./client/Main.java`
-    2. `java -cp . ./client/Main`
+    2. `java -cp . client.Main`
 
 #### Finished
 ###### LineRenderer

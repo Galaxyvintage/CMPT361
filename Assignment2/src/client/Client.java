@@ -10,8 +10,8 @@ import polygon.WireFrameRenderer;
 import windowing.PageTurner;
 import windowing.drawable.ColoredDrawable;
 import windowing.drawable.Drawable;
-import windowing.drawable.GhostWritingDrawable;
 import windowing.drawable.TranslatingDrawable;
+import windowing.drawable.ZBufferDrawable;
 import windowing.graphics.Dimensions;
 
 
@@ -49,6 +49,7 @@ public class Client implements PageTurner {
 		image = new TranslatingDrawable(drawable, point(0, 0), dimensions(750, 750));
 		image = new ColoredDrawable(image, ARGB_WHITE);
 		fullPanel = new TranslatingDrawable(image, point(50, 50), PANEL_SIZE);
+        fullPanel = new ZBufferDrawable(fullPanel);
 	}
 
 	private Point2D point(int x, int y) {
@@ -73,9 +74,8 @@ public class Client implements PageTurner {
 				break;
 			case 2:  new MeshPolygonTest(fullPanel, polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
 				break;
-//			case 3:	 centeredTriangleTest(fullPanel, polygonRenderer);
-//				break;
-//
+			case 3:	 new centeredTriangleTest(fullPanel, polygonRenderer);
+				break;
 //			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
 //				interpreter = new SimpInterpreter("tomsPage4.simp", depthCueingDrawable, renderers);
 //				interpreter.interpret();

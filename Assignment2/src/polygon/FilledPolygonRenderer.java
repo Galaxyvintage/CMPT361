@@ -28,14 +28,11 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         Vertex3D RBotVertex = RChain.get(RLength - 1);
         Vertex3D MidVertex;
 
-
-
         int MidVertexSide;
         double LSlope;
         double RSlope;
         double LX = LTopVertex.getIntX();
         double RX = RTopVertex.getIntX();
-
 
         if (LLength > RLength) {
             MidVertexSide = LEFT;
@@ -53,7 +50,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         double RRed   = RTopVertex.getColor().getR();
         double RGreen = RTopVertex.getColor().getG();
         double RBlue  = RTopVertex.getColor().getB();
-
 
         int TopY = LTopVertex.getIntY();
         int BotY = LBotVertex.getIntY();
