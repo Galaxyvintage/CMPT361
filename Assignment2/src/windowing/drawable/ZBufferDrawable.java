@@ -11,7 +11,6 @@ public class ZBufferDrawable extends DrawableDecorator {
         int width = delegate.getWidth();
         int height = delegate.getHeight();
         resetBuffer(width, height);
-        clear();
     }
 
     @Override
