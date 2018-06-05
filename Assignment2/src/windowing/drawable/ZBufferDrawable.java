@@ -19,6 +19,9 @@ public class ZBufferDrawable extends DrawableDecorator {
             delegate.setPixel(x, y, z, argbColor);
             zBuffer[x][y] = z;
         }
+        else {
+//            System.out.println(z);
+        }
     }
 
     @Override

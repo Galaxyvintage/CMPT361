@@ -34,6 +34,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         double LX = LTopVertex.getIntX();
         double RX = RTopVertex.getIntX();
 
+        // Finding which vertex is the mid vertex
         if (LLength > RLength) {
             MidVertexSide = LEFT;
             MidVertex = LChain.get(SECOND_VERTEX);
@@ -42,6 +43,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             MidVertex = RChain.get(SECOND_VERTEX);
         }
 
+        // Shading vertex color
         Color c;
         c = vertexShader.shade(LTopVertex.getColor());
         LTopVertex = LTopVertex.replaceColor(c);
@@ -56,7 +58,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         c = vertexShader.shade(MidVertex.getColor());
         MidVertex = MidVertex.replaceColor(c);
 
-        
+
+        // Left and Right RGB slopes and initial values
         double LRedSlope, LGreenSlope, LBlueSlope;
         double RRedSlope, RGreenSlope, RBlueSlope;
         double LRed   = LTopVertex.getColor().getR();
@@ -66,80 +69,106 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         double RGreen = RTopVertex.getColor().getG();
         double RBlue  = RTopVertex.getColor().getB();
 
-        int TopY = LTopVertex.getIntY();
-        int BotY = LBotVertex.getIntY();
-        int MidY = MidVertex.getIntY();
+        // Assuming all vertices have the same z value
+        double z = LTopVertex.getZ();
 
-        boolean isTopHorizontal = false;
+        double LDeltaX, LDeltaY;
+        double LDeltaR, LDeltaG, LDeltaB;
+
+        double RDeltaX, RDeltaY;
+        double RDeltaR, RDeltaG, RDeltaB;
+
+        // Mid to Bottom (Switching DDA)
+        double DeltaX, DeltaY;
+        double DeltaR, DeltaG, DeltaB;
+
+        boolean isBotHorizontal = false;
         if(MidVertexSide == LEFT) {
-            double LDeltaX = MidVertex.getIntX() - LTopVertex.getIntX();
-            double LDeltaY = MidVertex.getIntY() - LTopVertex.getIntY();
-            double RDeltaX = RBotVertex.getIntX() - RTopVertex.getIntX();
-            double RDeltaY = RBotVertex.getIntY() - RTopVertex.getIntY();
-            double LDeltaR = MidVertex.getColor().getR() - LTopVertex.getColor().getR();
-            double LDeltaG = MidVertex.getColor().getG() - LTopVertex.getColor().getG();
-            double LDeltaB = MidVertex.getColor().getB() - LTopVertex.getColor().getB();
-            double RDeltaR = RBotVertex.getColor().getR() - RTopVertex.getColor().getR();
-            double RDeltaG = RBotVertex.getColor().getG() - RTopVertex.getColor().getG();
-            double RDeltaB = RBotVertex.getColor().getB() - RTopVertex.getColor().getB();
+            LDeltaX = MidVertex.getIntX() - LTopVertex.getIntX();
+            LDeltaY = MidVertex.getIntY() - LTopVertex.getIntY();
+            LDeltaR = MidVertex.getColor().getR() - LTopVertex.getColor().getR();
+            LDeltaG = MidVertex.getColor().getG() - LTopVertex.getColor().getG();
+            LDeltaB = MidVertex.getColor().getB() - LTopVertex.getColor().getB();
 
+            RDeltaX = RBotVertex.getIntX() - RTopVertex.getIntX();
+            RDeltaY = RBotVertex.getIntY() - RTopVertex.getIntY();
+            RDeltaR = RBotVertex.getColor().getR() - RTopVertex.getColor().getR();
+            RDeltaG = RBotVertex.getColor().getG() - RTopVertex.getColor().getG();
+            RDeltaB = RBotVertex.getColor().getB() - RTopVertex.getColor().getB();
 
-            if((int)LDeltaY == 0) {
-                LSlope = 0;
-                LRedSlope = 0;
-                LGreenSlope = 0;
-                LBlueSlope = 0;
-                isTopHorizontal = true;
-            } else {
-                LSlope = LDeltaX / LDeltaY;
-                LRedSlope = LDeltaR / LDeltaY;
-                LGreenSlope = LDeltaG / LDeltaY;
-                LBlueSlope = LDeltaB / LDeltaY;
+            DeltaX = LBotVertex.getIntX() - MidVertex.getIntX();
+            DeltaY = LBotVertex.getIntY() - MidVertex.getIntY();
+            DeltaR = LBotVertex.getColor().getR() - MidVertex.getColor().getR();
+            DeltaG = LBotVertex.getColor().getG() - MidVertex.getColor().getG();
+            DeltaB = LBotVertex.getColor().getB() - MidVertex.getColor().getB();
+
+            if(MidVertex.getIntY() == RBotVertex.getIntY()) {
+                isBotHorizontal = true;
             }
+
+        } else {
+            LDeltaX = LBotVertex.getIntX() - LTopVertex.getIntX();
+            LDeltaY = LBotVertex.getIntY() - LTopVertex.getIntY();
+            LDeltaR = LBotVertex.getColor().getR() - LTopVertex.getColor().getR();
+            LDeltaG = LBotVertex.getColor().getG() - LTopVertex.getColor().getG();
+            LDeltaB = LBotVertex.getColor().getB() - LTopVertex.getColor().getB();
+
+            RDeltaX = MidVertex.getIntX() - RTopVertex.getIntX();
+            RDeltaY = MidVertex.getIntY() - RTopVertex.getIntY();
+            RDeltaR = MidVertex.getColor().getR() - RTopVertex.getColor().getR();
+            RDeltaG = MidVertex.getColor().getG() - RTopVertex.getColor().getG();
+            RDeltaB = MidVertex.getColor().getB() - RTopVertex.getColor().getB();
+
+            DeltaX = RBotVertex.getIntX() - MidVertex.getIntX();
+            DeltaY = RBotVertex.getIntY() - MidVertex.getIntY();
+            DeltaR = RBotVertex.getColor().getR() - MidVertex.getColor().getR();
+            DeltaG = RBotVertex.getColor().getG() - MidVertex.getColor().getG();
+            DeltaB = RBotVertex.getColor().getB() - MidVertex.getColor().getB();
+
+            if(MidVertex.getIntY() == LBotVertex.getIntY()) {
+                isBotHorizontal = true;
+            }
+        }
+
+
+        // Handle Top horizontal cases
+        if((int)RDeltaY == 0) {
+            RSlope = 0;
+            RRedSlope = 0;
+            RGreenSlope = 0;
+            RBlueSlope = 0;
+        } else {
             RSlope = RDeltaX / RDeltaY;
             RRedSlope = RDeltaR / RDeltaY;
             RGreenSlope = RDeltaG / RDeltaY;
             RBlueSlope = RDeltaB / RDeltaY;
+        }
 
+        if((int)LDeltaY == 0) {
+            LSlope = 0;
+            LRedSlope = 0;
+            LGreenSlope = 0;
+            LBlueSlope = 0;
         } else {
-            double LDeltaX = LBotVertex.getIntX() - LTopVertex.getIntX();
-            double LDeltaY = LBotVertex.getIntY() - LTopVertex.getIntY();
-            double RDeltaX = MidVertex.getIntX() - RTopVertex.getIntX();
-            double RDeltaY = MidVertex.getIntY() - RTopVertex.getIntY();
-            double LDeltaR = LBotVertex.getColor().getR() - LTopVertex.getColor().getR();
-            double LDeltaG = LBotVertex.getColor().getG() - LTopVertex.getColor().getG();
-            double LDeltaB = LBotVertex.getColor().getB() - LTopVertex.getColor().getB();
-            double RDeltaR = MidVertex.getColor().getR() - RTopVertex.getColor().getR();
-            double RDeltaG = MidVertex.getColor().getG() - RTopVertex.getColor().getG();
-            double RDeltaB = MidVertex.getColor().getB() - RTopVertex.getColor().getB();
-
-
-            if((int)RDeltaY == 0) {
-                RSlope = 0;
-                RRedSlope = 0;
-                RGreenSlope = 0;
-                RBlueSlope = 0;
-                isTopHorizontal = true;
-            } else {
-                RSlope = RDeltaX / RDeltaY;
-                RRedSlope = RDeltaR / RDeltaY;
-                RGreenSlope = RDeltaG / RDeltaY;
-                RBlueSlope = RDeltaB / RDeltaY;
-            }
             LSlope = LDeltaX / LDeltaY;
             LRedSlope = LDeltaR / LDeltaY;
             LGreenSlope = LDeltaG / LDeltaY;
             LBlueSlope = LDeltaB / LDeltaY;
         }
 
+
+        int TopY = LTopVertex.getIntY();
+        int BotY = LBotVertex.getIntY();
+        int MidY = MidVertex.getIntY();
         for(int j = TopY; j >= BotY; j--) {
+            // Switch slope when MidY is reached
             if(j == MidY) {
                 if(MidVertexSide == LEFT) {
-                    double LDeltaX = LBotVertex.getIntX() - MidVertex.getIntX();
-                    double LDeltaY = LBotVertex.getIntY() - MidVertex.getIntY();
-                    double LDeltaR = LBotVertex.getColor().getR() - MidVertex.getColor().getR();
-                    double LDeltaG = LBotVertex.getColor().getG() - MidVertex.getColor().getG();
-                    double LDeltaB = LBotVertex.getColor().getB() - MidVertex.getColor().getB();
+                    LDeltaX = DeltaX;
+                    LDeltaY = DeltaY;
+                    LDeltaR = DeltaR;
+                    LDeltaG = DeltaG;
+                    LDeltaB = DeltaB;
 
                     LX = MidVertex.getIntX();
                     LRed = MidVertex.getColor().getR();
@@ -152,11 +181,11 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                     LBlueSlope = LDeltaB / LDeltaY;
 
                 } else {
-                    double RDeltaX = RBotVertex.getIntX() - MidVertex.getIntX();
-                    double RDeltaY = RBotVertex.getIntY() - MidVertex.getIntY();
-                    double RDeltaR = RBotVertex.getColor().getR() - MidVertex.getColor().getR();
-                    double RDeltaG = RBotVertex.getColor().getG() - MidVertex.getColor().getG();
-                    double RDeltaB = RBotVertex.getColor().getB() - MidVertex.getColor().getB();
+                    RDeltaX = DeltaX;
+                    RDeltaY = DeltaY;
+                    RDeltaR = DeltaR;
+                    RDeltaG = DeltaG;
+                    RDeltaB = DeltaB;
 
                     RX = MidVertex.getIntX();
                     RRed = MidVertex.getColor().getR();
@@ -176,21 +205,22 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             double G1 = LGreen;
             double B1 = LBlue;
 
+
+
             for(int i = X1; i <= X2 - 1; i++) {
-                if(isTopHorizontal && j == TopY) {
-                    // Don't render horizontal top
+                if(isBotHorizontal && j == BotY) {
+                    // Don't render horizontal bot
                     break;
                 }
                 Color color = new Color(R1, G1, B1);
-                drawable.setPixelWithCoverage(i, j , 0, color.asARGB(), COVERAGE);
-
+                drawable.setPixelWithCoverage(i, j, z, color.asARGB(), COVERAGE);
                 R1 += ((RRed - LRed) / (double)(X2 - X1));
                 G1 += ((RGreen - LGreen) / (double)(X2 - X1));
                 B1 += ((RBlue - LBlue) / (double)(X2 - X1));
             }
+
             LX -= LSlope;
             RX -= RSlope;
-
             LRed   -= LRedSlope;
             LGreen -= LGreenSlope;
             LBlue  -= LBlueSlope;

@@ -14,8 +14,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
     public static FilledPolygonRenderer make() { return new FilledPolygonRenderer();}
 
     // TODO: Need to optimize and clean up
+    // Left-Top Rasterization rule.....
     public void drawPolygon(Polygon polygon, Drawable drawable, Shader vertexShader){
-
         Chain LChain = polygon.leftChain();
         Chain RChain = polygon.rightChain();
 
@@ -44,7 +44,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             MidVertex = RChain.get(SECOND_VERTEX);
         }
 
-        boolean isTopHorizontal = false;
+        boolean isBotHorizontal = false;
         if(MidVertexSide == LEFT) {
             double LDeltaX = MidVertex.getIntX() - LTopVertex.getIntX();
             double LDeltaY = MidVertex.getIntY() - LTopVertex.getIntY();
@@ -53,7 +53,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
 
             if((int)LDeltaY == 0) {
                 LSlope = 0;
-                isTopHorizontal = true;
             } else {
                 LSlope = LDeltaX / LDeltaY;
             }
@@ -66,7 +65,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
 
             if((int)RDeltaY == 0) {
                 RSlope = 0;
-                isTopHorizontal = true;
+                isBotHorizontal = true;
             } else {
                 RSlope = RDeltaX / RDeltaY;
             }
@@ -83,12 +82,22 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                     double LDeltaX = LBotVertex.getIntX() - MidVertex.getIntX();
                     double LDeltaY = LBotVertex.getIntY() - MidVertex.getIntY();
                     LX = MidVertex.getIntX();
-                    LSlope = LDeltaX / LDeltaY;
+                    if(LDeltaY == 0) {
+                        isBotHorizontal = true;
+                        LSlope = 0;
+                    } else {
+                        LSlope = LDeltaX / LDeltaY;
+                    }
                 } else {
                     double RDeltaX = RBotVertex.getIntX() - MidVertex.getIntX();
                     double RDeltaY = RBotVertex.getIntY() - MidVertex.getIntY();
                     RX = MidVertex.getIntX();
-                    RSlope = RDeltaX / RDeltaY;
+                    if(RDeltaY == 0) {
+                        isBotHorizontal = true;
+                        RSlope = 0;
+                    } else {
+                        RSlope = RDeltaX / RDeltaY;
+                    }
                 }
             }
 
@@ -96,8 +105,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             int X2 = (int)Math.round(RX);
 
             for(int i = X1; i <= X2 - 1; i++) {
-                if(isTopHorizontal && j == TopY) {
-                    // Don't render horizontal top
+                if(isBotHorizontal == true && j == BotY) {
+                    // Don't render horizontal bot
                     break;
                 }
                 drawable.setPixelWithCoverage(i, j , 0, color.asARGB(), COVERAGE);
