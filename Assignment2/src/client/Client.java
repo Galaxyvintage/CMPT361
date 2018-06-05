@@ -74,7 +74,7 @@ public class Client implements PageTurner {
 				break;
 			case 2:  new MeshPolygonTest(fullPanel, polygonRenderer, MeshPolygonTest.USE_PERTURBATION);
 				break;
-			case 3:	 new centeredTriangleTest(fullPanel, polygonRenderer);
+			case 3:	 new CenteredTriangleTest(fullPanel, polygonRenderer);
 				break;
 //			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
 //				interpreter = new SimpInterpreter("tomsPage4.simp", depthCueingDrawable, renderers);

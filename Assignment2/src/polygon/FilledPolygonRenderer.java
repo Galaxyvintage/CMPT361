@@ -42,6 +42,21 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             MidVertex = RChain.get(SECOND_VERTEX);
         }
 
+        Color c;
+        c = vertexShader.shade(LTopVertex.getColor());
+        LTopVertex = LTopVertex.replaceColor(c);
+        c = vertexShader.shade(LBotVertex.getColor());
+        LBotVertex = LBotVertex.replaceColor(c);
+
+        c = vertexShader.shade(RTopVertex.getColor());
+        RTopVertex = RTopVertex.replaceColor(c);
+        c = vertexShader.shade(RBotVertex.getColor());
+        RBotVertex = RBotVertex.replaceColor(c);
+
+        c = vertexShader.shade(MidVertex.getColor());
+        MidVertex = MidVertex.replaceColor(c);
+
+        
         double LRedSlope, LGreenSlope, LBlueSlope;
         double RRedSlope, RGreenSlope, RBlueSlope;
         double LRed   = LTopVertex.getColor().getR();

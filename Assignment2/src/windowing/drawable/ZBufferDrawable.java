@@ -18,8 +18,6 @@ public class ZBufferDrawable extends DrawableDecorator {
         if (z > zBuffer[x][y]) {
             delegate.setPixel(x, y, z, argbColor);
             zBuffer[x][y] = z;
-        } else {
-            System.out.println(zBuffer[x][y]);
         }
     }
 
