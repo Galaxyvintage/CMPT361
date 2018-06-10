@@ -42,15 +42,11 @@ public class Transformation {
         this.postMulitply(t);
     }
 
-    // Input unit: Degree
+    // Input unit: rad
     public void rotate(double rotateX, double rotateY, double rotateZ) {
         Transformation rotateXTransformation = Transformation.identity();
         Transformation rotateYTransformation = Transformation.identity();
         Transformation rotateZTransformation = Transformation.identity();
-
-        rotateX = (rotateX / 360) * (2.0 * Math.PI);
-        rotateY = (rotateY / 360) * (2.0 * Math.PI);
-        rotateZ = (rotateZ / 360) * (2.0 * Math.PI);
 
         if(rotateX != 0) {
             double a = Math.cos(rotateX);

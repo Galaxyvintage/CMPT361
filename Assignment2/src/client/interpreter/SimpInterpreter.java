@@ -80,7 +80,7 @@ public class SimpInterpreter {
         double transY = (double)dimensions.getHeight() / 2.0;
 
         worldToScreen = Transformation.identity();
-        worldToScreen.translate(transX,transY, 0);
+        worldToScreen.translate(transX, transY, 0);
         worldToScreen.scale(scaleX, scaleY, 1);
 	}
 
@@ -186,17 +186,18 @@ public class SimpInterpreter {
 	private void interpretRotate(String[] tokens) {
 		String axisString = tokens[1];
 		double angleInDegrees = cleanNumber(tokens[2]);
+        double angleInRad = (angleInDegrees / 360) * (2.0 * Math.PI);
 
 		double rotateX = 0;
 		double rotateY = 0;
 		double rotateZ = 0;
 
 		if (axisString.equalsIgnoreCase("X")) {
-		    rotateX = angleInDegrees;
+		    rotateX = angleInRad;
         } else if (axisString.equalsIgnoreCase("Y")) {
-		    rotateY = angleInDegrees;
+		    rotateY = angleInRad;
         } else if (axisString.equalsIgnoreCase("Z")) {
-		    rotateZ = angleInDegrees;
+		    rotateZ = angleInRad;
         }
         CTM.rotate(rotateX, rotateY, rotateZ);
 	}

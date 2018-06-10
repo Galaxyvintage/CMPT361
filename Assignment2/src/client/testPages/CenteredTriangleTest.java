@@ -2,6 +2,7 @@ package client.testPages;
 
 
 import geometry.Point3DH;
+import geometry.Transformation;
 import geometry.Vertex3D;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
@@ -17,7 +18,7 @@ public class CenteredTriangleTest {
     private static final int RADIUS = 275;
     private static final int MAX_Z = -1;
     private static final int MIN_Z = -199;
-    private static final Double DEFAULT_ANGLE = (2.0 * Math.PI) / 3; // 120 degrees / (2 * pi)/3 rad
+    private static final double DEFAULT_ANGLE = (2.0 * Math.PI) / 3; // 120 degrees / (2 * pi)/3 rad
 
     private final PolygonRenderer renderer;
     private final Drawable panel;
@@ -57,20 +58,30 @@ public class CenteredTriangleTest {
         v2 = v2.replacePoint(new Point3DH(v2.getX(), v2.getY(), rndZ));
         v3 = v3.replacePoint(new Point3DH(v3.getX(), v3.getY(), rndZ));
 
+        Transformation t = Transformation.identity();
+        t.translate(center.getIntX(), center.getIntY(), 0);
+        t.rotate(0, 0, rndRotate);
+        t.translate(-center.getIntX(), -center.getIntY(), 0);
+
+        v1 = t.mulitplyVertex(v1);
+        v2 = t.mulitplyVertex(v2);
+        v3 = t.mulitplyVertex(v3);
         Polygon p = Polygon.makeEnsuringCounterClockwise(v1, v2, v3);
-
-        // Translate the triangle center to origin
-        Polygon p1 = p.translate(-center.getIntX(), -center.getIntY());
-
-        // Rotate around center
-        Polygon p2 = p1.rotateAroundCenter(rndRotate);
-
-        // Translate the triangle back;
-        Polygon p3 = p2.translate(center.getIntX(), center.getIntY());
-
+//
+//
+//
+//        // Translate the triangle center to origin
+//        Polygon p1 = p.translate(-center.getIntX(), -center.getIntY());
+//
+//        // Rotate around center
+//        Polygon p2 = p1.rotateAroundCenter(rndRotate);
+//
+//        // Translate the triangle back;
+//        Polygon p3 = p2.translate(center.getIntX(), center.getIntY());
+//
 
         Shader s = (c) -> color;
-        renderer.drawPolygon(p3, panel, s);
+        renderer.drawPolygon(p, panel, s);
     }
 
     private void render() {

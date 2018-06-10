@@ -23,15 +23,17 @@ public class DDALineRenderer implements LineRenderer {
 
         double x = p1.getX();
         double y = p1.getY();
+        double z = p1.getZ();
 
         double r = p1.getColor().getR();
         double g = p1.getColor().getG();
         double b = p1.getColor().getR();
 
+
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);
         int argbColor = new Color(r, g, b).asARGB();
-        drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, COVERAGE);
+        drawable.setPixelWithCoverage(x_round, y_round, z, argbColor, COVERAGE);
 
         double steps;
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -58,7 +60,7 @@ public class DDALineRenderer implements LineRenderer {
                 x_round = (int) Math.round(x);
                 y_round = (int) Math.round(y);
                 argbColor = new Color(r, g, b).asARGB();
-                drawable.setPixelWithCoverage(x_round, y_round, 0.0, argbColor, COVERAGE);
+                drawable.setPixelWithCoverage(x_round, y_round, z, argbColor, COVERAGE);
             }
         }
     }

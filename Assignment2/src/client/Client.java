@@ -12,7 +12,7 @@ import windowing.graphics.Dimensions;
 
 public class Client implements PageTurner {
 	private static final int ARGB_WHITE = 0xff_ff_ff_ff;
-	private static final int NUM_PAGES = 6;
+	private static final int NUM_PAGES = 8;
 	private static final Dimensions PANEL_SIZE = new Dimensions(650, 650);
 
 	private final Drawable drawable;
@@ -63,32 +63,33 @@ public class Client implements PageTurner {
 				break;
 			case 3:	 new CenteredTriangleTest(fullPanel, renderers.getFilledRenderer());
 				break;
-//			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
-//				interpreter = new SimpInterpreter("tomsPage4.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//
-//			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.RED);
-//				interpreter = new SimpInterpreter("tomsPage5.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//
-			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-				System.out.println("Working Directory = " + System.getProperty("user.dir"));
-				interpreter = new SimpInterpreter("simp/myTest.simp", depthCueingDrawable, renderers);
+			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
+				interpreter = new SimpInterpreter("simp/tomsPage4.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
 
-//			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//				interpreter = new SimpInterpreter("simp/page7.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//
-//			case 6:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//				interpreter = new SimpInterpreter("simp/page8.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-			default: defaultPage();
+			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.RED);
+				interpreter = new SimpInterpreter("simp/tomsPage5.simp", depthCueingDrawable, renderers);
+				interpreter.interpret();
+				break;
+
+			case 6:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
+				System.out.println("Working Directory = " + System.getProperty("user.dir"));
+				interpreter = new SimpInterpreter("simp/page6.simp", depthCueingDrawable, renderers);
+				interpreter.interpret();
+				break;
+
+			case 7:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
+                interpreter = new SimpInterpreter("simp/page7.simp", depthCueingDrawable, renderers);
+                interpreter.interpret();
+                break;
+
+			case 0:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
+				interpreter = new SimpInterpreter("simp/page8.simp", depthCueingDrawable, renderers);
+				interpreter.interpret();
+				break;
+			default:
+			    defaultPage();
 				break;
 		}
 	}

@@ -3,7 +3,7 @@ package windowing.drawable;
 
 public class ZBufferDrawable extends DrawableDecorator {
 
-    private static final double DEFAULT_Z = -Double.MAX_VALUE;
+    private static final double DEFAULT_Z = -200;
     private double[][] zBuffer;
 
     public ZBufferDrawable(Drawable delegate) {
