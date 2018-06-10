@@ -53,9 +53,12 @@ public class SimpInterpreter {
 		this.drawable = drawable;
         this.renderers = renderers;
 		this.defaultColor = Color.WHITE;
+
 		makeWorldToScreenTransform(drawable.getDimensions());
-        CTM = Transformation.identity();
+
         transformationStack = new Stack<>();
+        CTM = Transformation.identity();
+
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
@@ -71,16 +74,14 @@ public class SimpInterpreter {
 		// View space -> Screen space:
 		//    Scale (200 to 650) and translate so that the origin is in the middle of the screen
 		//worldToScreen = ;
-        double scaleX = (double)(WORLD_HIGH_X - WORLD_LOW_X) / (double)dimensions.getWidth();
-        double scaleY = (double)(WORLD_HIGH_Y - WORLD_LOW_Y) / (double)dimensions.getHeight();
+        double scaleX = (double)dimensions.getWidth() / (double)(WORLD_HIGH_X - WORLD_LOW_X) ;
+        double scaleY = (double)dimensions.getHeight() / (double)(WORLD_HIGH_Y - WORLD_LOW_Y);
         double transX = (double)dimensions.getWidth() / 2.0;
         double transY = (double)dimensions.getHeight() / 2.0;
 
-        Transformation scaleMatrix = Transformation.scale(scaleX, scaleY, 1);
-        Transformation transMatrix = Transformation.translate(transX,transY, 0);
         worldToScreen = Transformation.identity();
-        worldToScreen = worldToScreen.postMulitply(scaleMatrix);
-        worldToScreen = worldToScreen.postMulitply(transMatrix);
+        worldToScreen.translate(transX,transY, 0);
+        worldToScreen.scale(scaleX, scaleY, 1);
 	}
 
 	public void interpret() {
@@ -133,12 +134,17 @@ public class SimpInterpreter {
 	}
 
 	private void push() {
-        transformationStack.push(CTM);
+        transformationStack.push(new Transformation(CTM));
+        CTM = transformationStack.peek();
 	}
 
 	private void pop() {
         transformationStack.pop();
-        CTM = transformationStack.peek();
+        if(!transformationStack.empty()) {
+            CTM = transformationStack.peek();
+        } else {
+            CTM = Transformation.identity();
+        }
 	}
 
 	private void wire() {
@@ -167,21 +173,32 @@ public class SimpInterpreter {
 		double sx = cleanNumber(tokens[1]);
 		double sy = cleanNumber(tokens[2]);
 		double sz = cleanNumber(tokens[3]);
-		CTM = CTM.postMulitply(Transformation.scale(sx, sy, sz));
+		CTM.scale(sx, sy, sz);
 	}
 
 	private void interpretTranslate(String[] tokens) {
 		double tx = cleanNumber(tokens[1]);
 		double ty = cleanNumber(tokens[2]);
 		double tz = cleanNumber(tokens[3]);
-        CTM = CTM.preMulitply(Transformation.translate(tx, ty, tz));
+        CTM.translate(tx, ty, tz);
 	}
 
 	private void interpretRotate(String[] tokens) {
 		String axisString = tokens[1];
 		double angleInDegrees = cleanNumber(tokens[2]);
 
-		// TODO: finish this method
+		double rotateX = 0;
+		double rotateY = 0;
+		double rotateZ = 0;
+
+		if (axisString.equalsIgnoreCase("X")) {
+		    rotateX = angleInDegrees;
+        } else if (axisString.equalsIgnoreCase("Y")) {
+		    rotateY = angleInDegrees;
+        } else if (axisString.equalsIgnoreCase("Z")) {
+		    rotateZ = angleInDegrees;
+        }
+        CTM.rotate(rotateX, rotateY, rotateZ);
 	}
 
 	private double cleanNumber(String string) {
@@ -204,12 +221,19 @@ public class SimpInterpreter {
 
 	private void interpretLine(String[] tokens) {
 		Vertex3D[] vertices = interpretVertices(tokens, 2, 1);
-		line(vertices[0], vertices[1]);
+		// object space to world space
+		Vertex3D p1 = CTM.mulitplyVertex(vertices[0]);
+		Vertex3D p2 = CTM.mulitplyVertex(vertices[1]);
+		line(p1, p2);
 	}
 
 	private void interpretPolygon(String[] tokens) {
 		Vertex3D[] vertices = interpretVertices(tokens, 3, 1);
-        polygon(vertices[0], vertices[1], vertices[2]);
+        // object space to world space
+        Vertex3D p1 = CTM.mulitplyVertex(vertices[0]);
+        Vertex3D p2 = CTM.mulitplyVertex(vertices[1]);
+        Vertex3D p3 = CTM.mulitplyVertex(vertices[2]);
+        polygon(p1, p2, p3);
 	}
 
 	public Vertex3D[] interpretVertices(String[] tokens, int numVertices, int startingIndex) {
@@ -265,6 +289,7 @@ public class SimpInterpreter {
 		renderers.getLineRenderer().drawLine(screenP1, screenP2, drawable);
 
 	}
+
 	private void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
 		Vertex3D screenP1 = transformToScreen(p1);
 		Vertex3D screenP2 = transformToScreen(p2);
@@ -280,12 +305,11 @@ public class SimpInterpreter {
         renderer.drawPolygon(p, drawable);
 	}
 
-
-
 	private Vertex3D transformToScreen(Vertex3D vertex) {
 	    return worldToScreen.mulitplyVertex(vertex);
 	}
-//	private Vertex3D transformToCamera(Vertex3D vertex) {
+
+	//	private Vertex3D transformToCamera(Vertex3D vertex) {
 //	    // [A2] Camera is fixed at looking down z axis....
 //        return vertex;
 //	}

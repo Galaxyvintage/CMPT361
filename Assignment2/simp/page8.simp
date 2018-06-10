@@ -3,7 +3,6 @@
 	rotate X 15
 	rotate Y 30
 	translate 0 -40 0
-
 	file "cubeline"
 }
 {

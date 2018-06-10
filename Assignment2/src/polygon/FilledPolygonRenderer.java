@@ -14,6 +14,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
     public static FilledPolygonRenderer make() { return new FilledPolygonRenderer();}
 
     // TODO: Need to optimize and clean up
+    // Assume polygon has three distinct points......
+    // (after projection there could be just two distinct points, need line renderer)
     public void drawPolygon(Polygon polygon, Drawable drawable, Shader vertexShader){
 
         Chain LChain = polygon.leftChain();
@@ -38,9 +40,12 @@ public class FilledPolygonRenderer implements PolygonRenderer {
         if (LLength > RLength) {
             MidVertexSide = LEFT;
             MidVertex = LChain.get(SECOND_VERTEX);
-        } else {
+        } else if (RLength > LLength) {
             MidVertexSide = RIGHT;
             MidVertex = RChain.get(SECOND_VERTEX);
+        } else {
+            MidVertexSide = LEFT;
+            MidVertex = LTopVertex;
         }
 
         // Shading vertex color

@@ -12,7 +12,7 @@ import windowing.graphics.Dimensions;
 
 public class Client implements PageTurner {
 	private static final int ARGB_WHITE = 0xff_ff_ff_ff;
-	private static final int NUM_PAGES = 5;
+	private static final int NUM_PAGES = 6;
 	private static final Dimensions PANEL_SIZE = new Dimensions(650, 650);
 
 	private final Drawable drawable;
@@ -34,6 +34,7 @@ public class Client implements PageTurner {
 	private void createDrawables() {
 		image = new TranslatingDrawable(drawable, point(0, 0), dimensions(750, 750));
 		image = new ColoredDrawable(image, ARGB_WHITE);
+		image = new InvertedYDrawable(image);
 		fullPanel = new TranslatingDrawable(image, point(50, 50), PANEL_SIZE);
         fullPanel = new ZBufferDrawable(fullPanel);
 	}
@@ -74,17 +75,17 @@ public class Client implements PageTurner {
 //
 			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
 				System.out.println("Working Directory = " + System.getProperty("user.dir"));
-				interpreter = new SimpInterpreter("simp/cubeline.simp", depthCueingDrawable, renderers);
+				interpreter = new SimpInterpreter("simp/myTest.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
-//
-//			case 7:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//				interpreter = new SimpInterpreter("page7.simp", depthCueingDrawable, renderers);
+
+//			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
+//				interpreter = new SimpInterpreter("simp/page7.simp", depthCueingDrawable, renderers);
 //				interpreter.interpret();
 //				break;
 //
-//			case 0:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//				interpreter = new SimpInterpreter("page8.simp", depthCueingDrawable, renderers);
+//			case 6:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
+//				interpreter = new SimpInterpreter("simp/page8.simp", depthCueingDrawable, renderers);
 //				interpreter.interpret();
 //				break;
 			default: defaultPage();
