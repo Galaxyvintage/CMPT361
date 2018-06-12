@@ -1,0 +1,9 @@
+{
+  wire
+  rotate X -35
+  rotate Y -20
+  translate 0 20 -80
+  scale 20 20 20
+
+  file "icosahedron"
+}
