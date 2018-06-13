@@ -85,4 +85,13 @@ public class Vertex3D implements Vertex {
 		return "(" + getIntX() + ", " + getIntY() + getIntZ() + ", " + ", " + getColor().toIntString() + ")";
 	}
 
+	// TODO: Double check if it works in homoegeneous space......
+	public Vertex3D normalize() {
+		double x = point.getX();
+		double y = point.getY();
+		double z = point.getZ();
+
+		double length = Math.sqrt(x*x + y*y + z*z);
+		return new Vertex3D(x/length, y/length, z/length, color);
+	}
 }

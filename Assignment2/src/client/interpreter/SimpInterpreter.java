@@ -310,7 +310,7 @@ public class SimpInterpreter {
 	    return worldToScreen.mulitplyVertex(vertex);
 	}
 
-	//	private Vertex3D transformToCamera(Vertex3D vertex) {
+//	private Vertex3D transformToCamera(Vertex3D vertex) {
 //	    // [A2] Camera is fixed at looking down z axis....
 //        return vertex;
 //	}

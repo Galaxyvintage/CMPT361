@@ -17,6 +17,7 @@ public class DepthCueingDrawable extends DrawableDecorator {
         this.nearColor = color;
     }
 
+    // Fixme: clean up when using actual clipper instead of pixel clipping
     @Override
     public void setPixel(int x, int y, double z, int argbColor) {
         // interpolate Color based on z

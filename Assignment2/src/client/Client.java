@@ -4,6 +4,7 @@ package client;
 import client.interpreter.SimpInterpreter;
 import client.testPages.*;
 import geometry.Point2D;
+import model.Icosahedron;
 import windowing.PageTurner;
 import windowing.drawable.*;
 import windowing.graphics.Color;
@@ -29,6 +30,8 @@ public class Client implements PageTurner {
 		this.drawable = drawable;
 		this.renderers = new RendererTrio();
 		createDrawables();
+		Icosahedron icosahedron = new Icosahedron();
+		icosahedron.outputFaces();
 	}
 
 	private void createDrawables() {

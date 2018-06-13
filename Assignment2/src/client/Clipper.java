@@ -1,5 +1,7 @@
 package client;
 
+
+// For assignment 3
 public class Clipper {
     private int nearZ;
     private int farZ;

@@ -1,6 +1,5 @@
 package polygon;
 
-import geometry.Point3DH;
 import geometry.Vertex;
 import geometry.Vertex3D;
 
@@ -146,56 +145,5 @@ public class Polygon extends Chain {
 	
 	public String toString() {
 		return "Polygon[" + super.toString() + "]";
-	}
-
-
-	public Polygon translate(int deltaX, int deltaY) {
-        ArrayList<Vertex3D> newVertices = new ArrayList<>();
-
-        for(Vertex3D vertex: vertices) {
-            double oldX = vertex.getX();
-            double oldY = vertex.getY();
-            double newX = oldX + deltaX;
-            double newY = oldY + deltaY;
-            Vertex3D v = vertex.replacePoint(new Point3DH(newX, newY, vertex.getZ()));
-            newVertices.add(v);
-        }
-
-        Vertex3D p1 = newVertices.get(0);
-        Vertex3D p2 = newVertices.get(1);
-        Vertex3D p3 = newVertices.get(2);
-        return Polygon.makeEnsuringCounterClockwise(p1, p2, p3);
-    }
-
-	public Polygon rotateAroundCenter(double angle) {
-
-		ArrayList<Vertex3D> newVertices = new ArrayList<>();
-
-		/*
-		+-------------+-----------------------------+------------+
-		| col vector  |    rotational matrix        | col vector |
-        |-------------+-----------------------------+------------|
-		|      x'     |   cos(angle)    -sin(angle) |      x     |
-		|      y'     |   sin(angle)     cos(angle) |      y     |
-		+-------------+-----------------------------+------------+
-		 */
-
-		double a = Math.cos(angle);
-		double b = Math.sin(angle);
-
-		for(Vertex3D vertex: vertices) {
-			double oldX = vertex.getX();
-			double oldY = vertex.getY();
-			double newX = a * oldX + (-b) * oldY;
-			double newY = b * oldX + (+a) * oldY;
-			Vertex3D v = vertex.replacePoint(new Point3DH(newX, newY, vertex.getZ()));
-			newVertices.add(v);
-		}
-
-		Vertex3D p1 = newVertices.get(0);
-		Vertex3D p2 = newVertices.get(1);
-		Vertex3D p3 = newVertices.get(2);
-
-		return Polygon.makeEnsuringCounterClockwise(p1, p2, p3);
 	}
 }
