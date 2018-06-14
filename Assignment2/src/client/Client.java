@@ -69,7 +69,7 @@ public class Client implements PageTurner {
 				break;
 			case 3:	 new CenteredTriangleTest(fullPanel, renderers.getFilledRenderer());
 				break;
-			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
+			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
 				interpreter = new SimpInterpreter("simp/page4.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
