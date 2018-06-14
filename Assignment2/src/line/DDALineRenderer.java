@@ -15,6 +15,7 @@ public class DDALineRenderer implements LineRenderer {
         // coordinate
         double deltaX = p2.getX() - p1.getX();
         double deltaY = p2.getY() - p1.getY();
+        double deltaZ = p2.getZ() - p1.getZ();
 
         // color
         double deltaR = p2.getColor().getR() - p1.getColor().getR();
@@ -46,6 +47,7 @@ public class DDALineRenderer implements LineRenderer {
         if(steps != 0) {
             double xIncrement = deltaX / steps;
             double yIncrement = deltaY / steps;
+            double zIncrement = deltaZ / steps;
             double rIncrement = deltaR / steps;
             double gIncrement = deltaG / steps;
             double bIncrement = deltaB / steps;
@@ -53,6 +55,7 @@ public class DDALineRenderer implements LineRenderer {
             for (int k = 0; k < steps; k++) {
                 x += xIncrement;
                 y += yIncrement;
+                z += zIncrement;
                 r += rIncrement;
                 g += gIncrement;
                 b += bIncrement;

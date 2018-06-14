@@ -302,7 +302,7 @@ public class SimpInterpreter {
         } else {
             renderer = renderers.getWireframeRenderer();
         }
-        Polygon p = Polygon.makeEnsuringCounterClockwise(screenP1, screenP2, screenP3);
+        Polygon p = Polygon.make(screenP1, screenP2, screenP3);
         renderer.drawPolygon(p, drawable);
 	}
 

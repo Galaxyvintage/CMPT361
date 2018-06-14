@@ -8,7 +8,7 @@ public class DepthCueingDrawable extends DrawableDecorator {
     private final int nearZ;
     private final int farZ;
     private final Color nearColor;
-    private final Color farColor = Color.BLACK;
+    private final Color farColor = Color.RED;
 
     public DepthCueingDrawable(Drawable delegate, int nearZ,  int farZ, Color color) {
         super(delegate);
@@ -29,7 +29,7 @@ public class DepthCueingDrawable extends DrawableDecorator {
 
         double ratio = (z / (farZ - nearZ)) % 1.0;
         Color depthColor = nearColor.add(farColor.subtract(nearColor).scale(ratio));
-        delegate.setPixel(x,y,z,depthColor.asARGB());
+        delegate.setPixel(x, y, z, depthColor.asARGB());
     }
 
     @Override

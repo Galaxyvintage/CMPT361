@@ -1,19 +1,18 @@
 package model;
 
-import geometry.Vertex;
+
 import geometry.Vertex3D;
 import polygon.Polygon;
 import windowing.graphics.Color;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 /*
-References:
+Reference:
 http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 */
 public class Icosahedron {
@@ -31,7 +30,7 @@ public class Icosahedron {
 
     public void outputFaces() {
         try {
-            String path = "simp/myIcosahedron.simp";
+            String path = "simp/icosahedron.simp";
             File outputFile = new File(path);
             if (!outputFile.exists()) {
                 outputFile.createNewFile();
@@ -55,17 +54,17 @@ public class Icosahedron {
     }
 
     private void refineFaces() {
-        int recursionLevel = 2;
+        int recursionLevel = 3;
         for ( int i = 0; i < recursionLevel; i++) {
             ArrayList<Polygon> newFaces = new ArrayList<>();
            for(Polygon p: faces) {
                Vertex3D a = getMidPoint(p.get(0), p.get(1));
                Vertex3D b = getMidPoint(p.get(1), p.get(2));
                Vertex3D c = getMidPoint(p.get(2), p.get(0));
-               newFaces.add(Polygon.makeEnsuringCounterClockwise(p.get(0), a, c));
-               newFaces.add(Polygon.makeEnsuringCounterClockwise(p.get(1), b, a));
-               newFaces.add(Polygon.makeEnsuringCounterClockwise(p.get(2), c, b));
-               newFaces.add(Polygon.makeEnsuringCounterClockwise(a, b, c));
+               newFaces.add(Polygon.make(p.get(0), a, c));
+               newFaces.add(Polygon.make(p.get(1), b, a));
+               newFaces.add(Polygon.make(p.get(2), c, b));
+               newFaces.add(Polygon.make(a, b, c));
            }
            faces = newFaces;
         }
@@ -103,64 +102,64 @@ public class Icosahedron {
     private void initFaces() {
         faces = new ArrayList<>();
         Polygon p;
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(0), vertices.get(11), vertices.get(5));
+        p = Polygon.make(vertices.get(0), vertices.get(11), vertices.get(5));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(0), vertices.get(5), vertices.get(1));
+        p = Polygon.make(vertices.get(0), vertices.get(5), vertices.get(1));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(0), vertices.get(1), vertices.get(7));
+        p = Polygon.make(vertices.get(0), vertices.get(1), vertices.get(7));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(0), vertices.get(7), vertices.get(10));
+        p = Polygon.make(vertices.get(0), vertices.get(7), vertices.get(10));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(0), vertices.get(10), vertices.get(11));
+        p = Polygon.make(vertices.get(0), vertices.get(10), vertices.get(11));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(1), vertices.get(5), vertices.get(9));
+        p = Polygon.make(vertices.get(1), vertices.get(5), vertices.get(9));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(5), vertices.get(11), vertices.get(4));
+        p = Polygon.make(vertices.get(5), vertices.get(11), vertices.get(4));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(11), vertices.get(10), vertices.get(2));
+        p = Polygon.make(vertices.get(11), vertices.get(10), vertices.get(2));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(10), vertices.get(7), vertices.get(6));
+        p = Polygon.make(vertices.get(10), vertices.get(7), vertices.get(6));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(7), vertices.get(1), vertices.get(8));
+        p = Polygon.make(vertices.get(7), vertices.get(1), vertices.get(8));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(3), vertices.get(9), vertices.get(4));
+        p = Polygon.make(vertices.get(3), vertices.get(9), vertices.get(4));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(3), vertices.get(4), vertices.get(2));
+        p = Polygon.make(vertices.get(3), vertices.get(4), vertices.get(2));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(3), vertices.get(2), vertices.get(6));
+        p = Polygon.make(vertices.get(3), vertices.get(2), vertices.get(6));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(3), vertices.get(6), vertices.get(8));
+        p = Polygon.make(vertices.get(3), vertices.get(6), vertices.get(8));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(3), vertices.get(8), vertices.get(9));
+        p = Polygon.make(vertices.get(3), vertices.get(8), vertices.get(9));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(4), vertices.get(9), vertices.get(5));
+        p = Polygon.make(vertices.get(4), vertices.get(9), vertices.get(5));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(2), vertices.get(4), vertices.get(11));
+        p = Polygon.make(vertices.get(2), vertices.get(4), vertices.get(11));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(6), vertices.get(2), vertices.get(10));
+        p = Polygon.make(vertices.get(6), vertices.get(2), vertices.get(10));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(8), vertices.get(6), vertices.get(7));
+        p = Polygon.make(vertices.get(8), vertices.get(6), vertices.get(7));
         faces.add(p);
 
-        p = Polygon.makeEnsuringCounterClockwise(vertices.get(9), vertices.get(8), vertices.get(1));
+        p = Polygon.make(vertices.get(9), vertices.get(8), vertices.get(1));
         faces.add(p);
     }
 

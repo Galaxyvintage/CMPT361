@@ -231,6 +231,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             double B1 = LBlue;
             double Z1 = LZ;
 
+            // FIXME: Implicit back-face culling
             for(int i = X1; i <= X2 - 1; i++) {
                 if(isBotHorizontal && j == BotY) {
                     // Don't render horizontal bot
