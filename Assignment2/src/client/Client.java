@@ -31,10 +31,10 @@ public class Client implements PageTurner {
 		this.drawable = drawable;
 		this.renderers = new RendererTrio();
 		createDrawables();
-		Icosahedron icosahedron = new Icosahedron();
-		icosahedron.outputFaces();
-		Cylinder cylinder = new Cylinder();
-		cylinder.outputFaces();
+//		Icosahedron icosahedron = new Icosahedron();
+//		icosahedron.outputFaces();
+//		Cylinder cylinder = new Cylinder();
+//		cylinder.outputFaces();
 	}
 
 	private void createDrawables() {
