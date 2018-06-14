@@ -1,0 +1,12 @@
+{
+  wire
+
+  rotate Z 30
+  rotate X 15
+  translate 0 -80 -70
+  scale 30 30 30
+
+  file "cylinder"
+}
+
+

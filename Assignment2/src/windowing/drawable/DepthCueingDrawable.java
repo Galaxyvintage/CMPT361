@@ -8,7 +8,7 @@ public class DepthCueingDrawable extends DrawableDecorator {
     private final int nearZ;
     private final int farZ;
     private final Color nearColor;
-    private final Color farColor = Color.RED;
+    private final Color farColor = Color.BLACK;
 
     public DepthCueingDrawable(Drawable delegate, int nearZ,  int farZ, Color color) {
         super(delegate);

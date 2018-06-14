@@ -1,7 +1,15 @@
 {
-  rotate X 15
-  rotate Y 10
-  translate 0 0 -35
+  wire
+  translate -35 0 -25
+  scale 30 30 30
+
+  file "icosahedron"
+}
+
+
+{
+  filled
+  translate 35 0 -25
   scale 30 30 30
 
   file "icosahedron"

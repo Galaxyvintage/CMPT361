@@ -4,6 +4,7 @@ package client;
 import client.interpreter.SimpInterpreter;
 import client.testPages.*;
 import geometry.Point2D;
+import model.Cylinder;
 import model.Icosahedron;
 import windowing.PageTurner;
 import windowing.drawable.*;
@@ -32,6 +33,8 @@ public class Client implements PageTurner {
 		createDrawables();
 		Icosahedron icosahedron = new Icosahedron();
 		icosahedron.outputFaces();
+		Cylinder cylinder = new Cylinder();
+		cylinder.outputFaces();
 	}
 
 	private void createDrawables() {
@@ -72,7 +75,7 @@ public class Client implements PageTurner {
 				break;
 
 			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.RED);
-				interpreter = new SimpInterpreter("simp/tomsPage5.simp", depthCueingDrawable, renderers);
+				interpreter = new SimpInterpreter("simp/page5.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
 
