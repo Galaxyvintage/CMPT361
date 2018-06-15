@@ -59,26 +59,15 @@ public class CenteredTriangleTest {
         v3 = v3.replacePoint(new Point3DH(v3.getX(), v3.getY(), rndZ));
 
         Transformation t = Transformation.identity();
-        t.translate(center.getIntX(), center.getIntY(), 0);
-        t.rotate(0, 0, rndRotate);
-        t.translate(-center.getIntX(), -center.getIntY(), 0);
 
-        v1 = t.mulitplyVertex(v1);
-        v2 = t.mulitplyVertex(v2);
-        v3 = t.mulitplyVertex(v3);
+        t.preMultiply(Transformation.translate(-center.getIntX(), -center.getIntY(), 0));
+        t.preMultiply(Transformation.rotate(0, 0, rndRotate));
+        t.preMultiply(Transformation.translate(center.getIntX(), center.getIntY(), 0));
+
+        v1 = t.multiplyVertex(v1);
+        v2 = t.multiplyVertex(v2);
+        v3 = t.multiplyVertex(v3);
         Polygon p = Polygon.makeEnsuringCounterClockwise(v1, v2, v3);
-//
-//
-//
-//        // Translate the triangle center to origin
-//        Polygon p1 = p.translate(-center.getIntX(), -center.getIntY());
-//
-//        // Rotate around center
-//        Polygon p2 = p1.rotateAroundCenter(rndRotate);
-//
-//        // Translate the triangle back;
-//        Polygon p3 = p2.translate(center.getIntX(), center.getIntY());
-//
 
         Shader s = (c) -> color;
         renderer.drawPolygon(p, panel, s);

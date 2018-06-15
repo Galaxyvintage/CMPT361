@@ -80,8 +80,8 @@ public class SimpInterpreter {
         double transY = (double)dimensions.getHeight() / 2.0;
 
         worldToScreen = Transformation.identity();
-        worldToScreen.translate(transX, transY, 0);
-        worldToScreen.scale(scaleX, scaleY, 1);
+        worldToScreen.postMultiply(Transformation.translate(transX, transY, 0));
+        worldToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
 	}
 
 	public void interpret() {
@@ -173,14 +173,14 @@ public class SimpInterpreter {
 		double sx = cleanNumber(tokens[1]);
 		double sy = cleanNumber(tokens[2]);
 		double sz = cleanNumber(tokens[3]);
-		CTM.scale(sx, sy, sz);
+		CTM.postMultiply(Transformation.scale(sx, sy, sz));
 	}
 
 	private void interpretTranslate(String[] tokens) {
 		double tx = cleanNumber(tokens[1]);
 		double ty = cleanNumber(tokens[2]);
 		double tz = cleanNumber(tokens[3]);
-        CTM.translate(tx, ty, tz);
+        CTM.postMultiply(Transformation.translate(tx, ty, tz));
 	}
 
 	private void interpretRotate(String[] tokens) {
@@ -199,7 +199,7 @@ public class SimpInterpreter {
         } else if (axisString.equalsIgnoreCase("Z")) {
 		    rotateZ = angleInRad;
         }
-        CTM.rotate(rotateX, rotateY, rotateZ);
+        CTM.postMultiply(Transformation.rotate(rotateX, rotateY, rotateZ));
 	}
 
 	private double cleanNumber(String string) {
@@ -223,17 +223,17 @@ public class SimpInterpreter {
 	private void interpretLine(String[] tokens) {
 		Vertex3D[] vertices = interpretVertices(tokens, 2, 1);
 		// object space to world space
-		Vertex3D p1 = CTM.mulitplyVertex(vertices[0]);
-		Vertex3D p2 = CTM.mulitplyVertex(vertices[1]);
+		Vertex3D p1 = CTM.multiplyVertex(vertices[0]);
+		Vertex3D p2 = CTM.multiplyVertex(vertices[1]);
 		line(p1, p2);
 	}
 
 	private void interpretPolygon(String[] tokens) {
 		Vertex3D[] vertices = interpretVertices(tokens, 3, 1);
         // object space to world space
-        Vertex3D p1 = CTM.mulitplyVertex(vertices[0]);
-        Vertex3D p2 = CTM.mulitplyVertex(vertices[1]);
-        Vertex3D p3 = CTM.mulitplyVertex(vertices[2]);
+        Vertex3D p1 = CTM.multiplyVertex(vertices[0]);
+        Vertex3D p2 = CTM.multiplyVertex(vertices[1]);
+        Vertex3D p3 = CTM.multiplyVertex(vertices[2]);
         polygon(p1, p2, p3);
 	}
 
@@ -307,7 +307,7 @@ public class SimpInterpreter {
 	}
 
 	private Vertex3D transformToScreen(Vertex3D vertex) {
-	    return worldToScreen.mulitplyVertex(vertex);
+	    return worldToScreen.multiplyVertex(vertex);
 	}
 
 //	private Vertex3D transformToCamera(Vertex3D vertex) {

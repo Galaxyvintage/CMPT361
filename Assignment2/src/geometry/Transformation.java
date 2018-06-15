@@ -26,27 +26,28 @@ public class Transformation {
         return t;
     }
 
-    public void translate(double transX, double transY, double transZ) {
+    public static Transformation translate(double transX, double transY, double transZ) {
         Transformation t = Transformation.identity();
         t.transformationMatrix[0][MATRIX_SIZE - 1] = transX;
         t.transformationMatrix[1][MATRIX_SIZE - 1] = transY;
         t.transformationMatrix[2][MATRIX_SIZE - 1] = transZ;
-        this.postMulitply(t);
+        return t;
     }
 
-    public void scale(double scaleX, double scaleY, double scaleZ) {
+    public static Transformation scale(double scaleX, double scaleY, double scaleZ) {
         Transformation t = Transformation.identity();
         t.transformationMatrix[0][0] = scaleX;
         t.transformationMatrix[1][1] = scaleY;
         t.transformationMatrix[2][2] = scaleZ;
-        this.postMulitply(t);
+        return t;
     }
 
     // Input unit: rad
-    public void rotate(double rotateX, double rotateY, double rotateZ) {
+    public static Transformation rotate(double rotateX, double rotateY, double rotateZ) {
         Transformation rotateXTransformation = Transformation.identity();
         Transformation rotateYTransformation = Transformation.identity();
         Transformation rotateZTransformation = Transformation.identity();
+        Transformation result = Transformation.identity();
 
         if(rotateX != 0) {
             double a = Math.cos(rotateX);
@@ -55,7 +56,7 @@ public class Transformation {
             rotateXTransformation.transformationMatrix[1][2] = -b;
             rotateXTransformation.transformationMatrix[2][1] = b;
             rotateXTransformation.transformationMatrix[2][2] = a;
-            this.postMulitply(rotateXTransformation);
+            result.postMultiply(rotateXTransformation);
         }
 
         if(rotateY != 0) {
@@ -65,7 +66,7 @@ public class Transformation {
             rotateYTransformation.transformationMatrix[0][2] = b;
             rotateYTransformation.transformationMatrix[2][0] = -b;
             rotateYTransformation.transformationMatrix[2][2] = a;
-            this.postMulitply(rotateYTransformation);
+            result.postMultiply(rotateYTransformation);
         }
 
         if(rotateZ != 0) {
@@ -75,11 +76,12 @@ public class Transformation {
             rotateZTransformation.transformationMatrix[0][1] = -b;
             rotateZTransformation.transformationMatrix[1][0] = b;
             rotateZTransformation.transformationMatrix[1][1] = a;
-            this.postMulitply(rotateZTransformation);
+            result.postMultiply(rotateZTransformation);
         }
+        return result;
     }
 
-    public Vertex3D mulitplyVertex(Vertex3D v) {
+    public Vertex3D multiplyVertex(Vertex3D v) {
         double[][] t = this.transformationMatrix;
 
         Point3DH p = v.getPoint3D();
@@ -95,7 +97,7 @@ public class Transformation {
         return new Vertex3D(new Point3DH(newX, newY, newZ, newW), v.getColor());
     }
 
-    private void preMulitply(Transformation t) {
+    public void preMultiply(Transformation t) {
         Transformation result = new Transformation();
         for(int k = 0; k < MATRIX_SIZE; k++) {
             for (int i = 0; i < MATRIX_SIZE; i++) {
@@ -108,7 +110,7 @@ public class Transformation {
         this.transformationMatrix = result.transformationMatrix;
     }
 
-    private void postMulitply(Transformation t) {
+    public void postMultiply(Transformation t) {
         Transformation result = new Transformation();
         for(int k = 0; k < MATRIX_SIZE; k++) {
             for (int i = 0; i < MATRIX_SIZE; i++) {
