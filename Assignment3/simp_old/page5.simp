@@ -1,0 +1,20 @@
+rotate X 15
+rotate Z 20
+
+{
+  wire
+  translate 20 -100 -70
+  scale 40 40 40
+
+  file "cylinder"
+}
+
+
+{
+  wire
+  translate -55 10 -25
+  scale 30 30 30
+
+  file "icosahedron"
+}
+
