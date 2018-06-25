@@ -70,28 +70,28 @@ public class Client implements PageTurner {
 			case 3:	 new CenteredTriangleTest(fullPanel, renderers.getFilledRenderer());
 				break;
 			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
-				interpreter = new SimpInterpreter("simp/page4.simp", depthCueingDrawable, renderers);
+				interpreter = new SimpInterpreter("simp_old/page4.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
 
 			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.RED);
-				interpreter = new SimpInterpreter("simp/page5.simp", depthCueingDrawable, renderers);
+				interpreter = new SimpInterpreter("simp_old/page5.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
 
 			case 6:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
 				System.out.println("Working Directory = " + System.getProperty("user.dir"));
-				interpreter = new SimpInterpreter("simp/page6.simp", depthCueingDrawable, renderers);
+				interpreter = new SimpInterpreter("simp_old/page6.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
 
 			case 7:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-                interpreter = new SimpInterpreter("simp/page7.simp", depthCueingDrawable, renderers);
+                interpreter = new SimpInterpreter("simp_old/page7.simp", depthCueingDrawable, renderers);
                 interpreter.interpret();
                 break;
 
 			case 0:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-				interpreter = new SimpInterpreter("simp/page8.simp", depthCueingDrawable, renderers);
+				interpreter = new SimpInterpreter("simp_old/page8.simp", depthCueingDrawable, renderers);
 				interpreter.interpret();
 				break;
 			default:

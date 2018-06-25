@@ -20,18 +20,24 @@ public class SimpInterpreter {
 	private static final int NUM_TOKENS_FOR_COMMAND = 1;
 	private static final int NUM_TOKENS_FOR_COLORED_VERTEX = 6;
 	private static final int NUM_TOKENS_FOR_UNCOLORED_VERTEX = 3;
+	private static final int VIEW_PLANE = -1; // d = -1;
 	private static final char COMMENT_CHAR = '#';
+
 	private RenderStyle renderStyle;
 	private RendererTrio renderers;
 
 	private Transformation CTM;
+	private Transformation worldToView;
 	private Transformation worldToScreen;
 	private Stack<Transformation> transformationStack;
 
-	private static int WORLD_LOW_X = -100;
-	private static int WORLD_HIGH_X = 100;
-	private static int WORLD_LOW_Y = -100;
-	private static int WORLD_HIGH_Y = 100;
+	private static int WORLD_LOW_X = -1;
+	private static int WORLD_HIGH_X = 1;
+	private static int WORLD_LOW_Y = -1;
+	private static int WORLD_HIGH_Y = 1;
+	private static int WORLD_NEAR_Z = 0;
+	private static int WORLD_FAR_Z = -200;
+
 
 	private LineBasedReader reader;
 	private Stack<LineBasedReader> readerStack;
@@ -40,7 +46,6 @@ public class SimpInterpreter {
 	private Color ambientLight = Color.BLACK;
 
 	private Drawable drawable;
-	private Transformation cameraToScreen;
 //	private Clipper clipper;
 
 	public enum RenderStyle {
@@ -55,8 +60,8 @@ public class SimpInterpreter {
 		this.defaultColor = Color.WHITE;
 
 		makeWorldToScreenTransform(drawable.getDimensions());
-
         transformationStack = new Stack<>();
+        worldToView = Transformation.identity();
         CTM = Transformation.identity();
 
 		reader = new LineBasedReader(filename);
@@ -65,15 +70,6 @@ public class SimpInterpreter {
 	}
 
 	private void makeWorldToScreenTransform(Dimensions dimensions) {
-		// [A2]
-		// World space -> View space:
-		//    1) Camera is fixed(Looking down z value)
-		//    2) Parallel Projection
-		// Do not thing, just ignoring Z values
-
-		// View space -> Screen space:
-		//    Scale (200 to 650) and translate so that the origin is in the middle of the screen
-		//worldToScreen = ;
         double scaleX = (double)dimensions.getWidth() / (double)(WORLD_HIGH_X - WORLD_LOW_X) ;
         double scaleY = (double)dimensions.getHeight() / (double)(WORLD_HIGH_Y - WORLD_LOW_Y);
         double transX = (double)dimensions.getWidth() / 2.0;
@@ -82,6 +78,9 @@ public class SimpInterpreter {
         worldToScreen = Transformation.identity();
         worldToScreen.postMultiply(Transformation.translate(transX, transY, 0));
         worldToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
+        worldToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
+
+
 	}
 
 	public void interpret() {
@@ -121,7 +120,7 @@ public class SimpInterpreter {
 		case "rotate" :		interpretRotate(tokens);	break;
 		case "line" :		interpretLine(tokens);		break;
 		case "polygon" :	interpretPolygon(tokens);	break;
-//		case "camera" :		interpretCamera(tokens);	break;
+		case "camera" :		interpretCamera(tokens);	break;
 //		case "surface" :	interpretSurface(tokens);	break;
 //		case "ambient" :	interpretAmbient(tokens);	break;
 //		case "depth" :		interpretDepth(tokens);		break;
@@ -134,7 +133,9 @@ public class SimpInterpreter {
 	}
 
 	private void push() {
-        transformationStack.push(new Transformation(CTM));
+		Transformation t = new Transformation(CTM);
+		t.preMultiply(worldToView);
+        transformationStack.push(t);
         CTM = transformationStack.peek();
 	}
 
@@ -143,7 +144,7 @@ public class SimpInterpreter {
         if(!transformationStack.empty()) {
             CTM = transformationStack.peek();
         } else {
-            CTM = Transformation.identity();
+            CTM = worldToView;
         }
 	}
 
@@ -161,7 +162,7 @@ public class SimpInterpreter {
 		int length = quotedFilename.length();
 		assert quotedFilename.charAt(0) == '"' && quotedFilename.charAt(length-1) == '"';
 		String filename = quotedFilename.substring(1, length-1);
-		file("simp/" + filename + ".simp");
+		file("simp_old/" + filename + ".simp");
 	}
 
 	private void file(String filename) {
@@ -237,6 +238,17 @@ public class SimpInterpreter {
         polygon(p1, p2, p3);
 	}
 
+	private void interpretCamera(String[] tokens) {
+		worldToView = CTM.adjoint();
+
+		for(int i = 0; i < transformationStack.size(); i++) {
+            Transformation t = transformationStack.elementAt(i);
+            t.preMultiply(worldToView);
+            transformationStack.set(i, t);
+        }
+		// TODO: pass params to clippers....
+	}
+
 	public Vertex3D[] interpretVertices(String[] tokens, int numVertices, int startingIndex) {
 		VertexColors vertexColors = verticesAreColored(tokens, numVertices);
 		Vertex3D vertices[] = new Vertex3D[numVertices];
@@ -288,7 +300,6 @@ public class SimpInterpreter {
 		Vertex3D screenP1 = transformToScreen(p1);
 		Vertex3D screenP2 = transformToScreen(p2);
 		renderers.getLineRenderer().drawLine(screenP1, screenP2, drawable);
-
 	}
 
 	private void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
@@ -307,11 +318,12 @@ public class SimpInterpreter {
 	}
 
 	private Vertex3D transformToScreen(Vertex3D vertex) {
-	    return worldToScreen.multiplyVertex(vertex);
-	}
+		// project to screen
+        double z = vertex.getZ();
+        Vertex3D out = worldToScreen.multiplyVertex(vertex);
+        out = out.euclidean();
+        out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
+		return out;
 
-//	private Vertex3D transformToCamera(Vertex3D vertex) {
-//	    // [A2] Camera is fixed at looking down z axis....
-//        return vertex;
-//	}
+	}
 }
