@@ -59,10 +59,10 @@ public class SimpInterpreter {
         this.renderers = renderers;
 		this.defaultColor = Color.WHITE;
 
-		makeWorldToScreenTransform(drawable.getDimensions());
         transformationStack = new Stack<>();
-        worldToView = Transformation.identity();
         CTM = Transformation.identity();
+        worldToView = Transformation.identity();
+        makeWorldToScreenTransform(drawable.getDimensions());
 
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
@@ -79,8 +79,6 @@ public class SimpInterpreter {
         worldToScreen.postMultiply(Transformation.translate(transX, transY, 0));
         worldToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
         worldToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
-
-
 	}
 
 	public void interpret() {
@@ -121,8 +119,8 @@ public class SimpInterpreter {
 		case "line" :		interpretLine(tokens);		break;
 		case "polygon" :	interpretPolygon(tokens);	break;
 		case "camera" :		interpretCamera(tokens);	break;
-//		case "surface" :	interpretSurface(tokens);	break;
-//		case "ambient" :	interpretAmbient(tokens);	break;
+		case "surface" :	interpretSurface(tokens);	break;
+		case "ambient" :	interpretAmbient(tokens);	break;
 //		case "depth" :		interpretDepth(tokens);		break;
 //		case "obj" :		interpretObj(tokens);		break;
 
@@ -134,7 +132,6 @@ public class SimpInterpreter {
 
 	private void push() {
 		Transformation t = new Transformation(CTM);
-		t.preMultiply(worldToView);
         transformationStack.push(t);
         CTM = transformationStack.peek();
 	}
@@ -162,7 +159,7 @@ public class SimpInterpreter {
 		int length = quotedFilename.length();
 		assert quotedFilename.charAt(0) == '"' && quotedFilename.charAt(length-1) == '"';
 		String filename = quotedFilename.substring(1, length-1);
-		file("simp_old/" + filename + ".simp");
+		file("simp/" + filename + ".simp");
 	}
 
 	private void file(String filename) {
@@ -239,15 +236,30 @@ public class SimpInterpreter {
 	}
 
 	private void interpretCamera(String[] tokens) {
-		worldToView = CTM.adjoint();
+        WORLD_LOW_X  = (int)cleanNumber(tokens[1]);
+        WORLD_LOW_Y  = (int)cleanNumber(tokens[2]);
+        WORLD_HIGH_X = (int)cleanNumber(tokens[3]);
+        WORLD_HIGH_Y = (int)cleanNumber(tokens[4]);
+        WORLD_NEAR_Z = (int)cleanNumber(tokens[5]);
+        WORLD_FAR_Z  = (int)cleanNumber(tokens[6]);
 
+		worldToView = CTM.adjoint();
 		for(int i = 0; i < transformationStack.size(); i++) {
             Transformation t = transformationStack.elementAt(i);
             t.preMultiply(worldToView);
             transformationStack.set(i, t);
         }
+        CTM = transformationStack.peek();
 		// TODO: pass params to clippers....
 	}
+
+    private void interpretSurface(String[] tokens) {
+	    //TODO:
+    }
+
+    private void interpretAmbient(String[] tokens) {
+        //TODO:
+    }
 
 	public Vertex3D[] interpretVertices(String[] tokens, int numVertices, int startingIndex) {
 		VertexColors vertexColors = verticesAreColored(tokens, numVertices);
