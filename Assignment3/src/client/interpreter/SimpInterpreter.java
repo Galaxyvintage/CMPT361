@@ -1,10 +1,13 @@
 package client.interpreter;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 //import notProvided.client.Clipper;
 
+import client.Clipper;
 import client.RendererTrio;
+import geometry.Line;
 import geometry.Point3DH;
 import geometry.Vertex3D;
 import geometry.Transformation;
@@ -31,12 +34,12 @@ public class SimpInterpreter {
 	private Transformation worldToScreen;
 	private Stack<Transformation> transformationStack;
 
-	private static int WORLD_LOW_X = -1;
-	private static int WORLD_HIGH_X = 1;
-	private static int WORLD_LOW_Y = -1;
-	private static int WORLD_HIGH_Y = 1;
-	private static int WORLD_NEAR_Z = 0;
-	private static int WORLD_FAR_Z = -200;
+	private static double WORLD_LOW_X = -1;
+	private static double WORLD_HIGH_X = 1;
+	private static double WORLD_LOW_Y = -1;
+	private static double WORLD_HIGH_Y = 1;
+	private static double WORLD_NEAR_Z = 0;
+	private static double WORLD_FAR_Z = -200;
 
 
 	private LineBasedReader reader;
@@ -46,7 +49,7 @@ public class SimpInterpreter {
 	private Color ambientLight = Color.BLACK;
 
 	private Drawable drawable;
-//	private Clipper clipper;
+	private Clipper clipper;
 
 	public enum RenderStyle {
 		FILLED,
@@ -63,6 +66,7 @@ public class SimpInterpreter {
         CTM = Transformation.identity();
         worldToView = Transformation.identity();
         makeWorldToScreenTransform(drawable.getDimensions());
+        clipper = new Clipper(VIEW_PLANE, WORLD_LOW_X, WORLD_HIGH_X, WORLD_LOW_Y, WORLD_HIGH_Y, WORLD_NEAR_Z, WORLD_FAR_Z);
 
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
@@ -220,7 +224,7 @@ public class SimpInterpreter {
 
 	private void interpretLine(String[] tokens) {
 		Vertex3D[] vertices = interpretVertices(tokens, 2, 1);
-		// object space to world space
+		// object space to view space
 		Vertex3D p1 = CTM.multiplyVertex(vertices[0]);
 		Vertex3D p2 = CTM.multiplyVertex(vertices[1]);
 		line(p1, p2);
@@ -228,7 +232,7 @@ public class SimpInterpreter {
 
 	private void interpretPolygon(String[] tokens) {
 		Vertex3D[] vertices = interpretVertices(tokens, 3, 1);
-        // object space to world space
+        // object space to view space
         Vertex3D p1 = CTM.multiplyVertex(vertices[0]);
         Vertex3D p2 = CTM.multiplyVertex(vertices[1]);
         Vertex3D p3 = CTM.multiplyVertex(vertices[2]);
@@ -236,12 +240,12 @@ public class SimpInterpreter {
 	}
 
 	private void interpretCamera(String[] tokens) {
-        WORLD_LOW_X  = (int)cleanNumber(tokens[1]);
-        WORLD_LOW_Y  = (int)cleanNumber(tokens[2]);
-        WORLD_HIGH_X = (int)cleanNumber(tokens[3]);
-        WORLD_HIGH_Y = (int)cleanNumber(tokens[4]);
-        WORLD_NEAR_Z = (int)cleanNumber(tokens[5]);
-        WORLD_FAR_Z  = (int)cleanNumber(tokens[6]);
+        WORLD_LOW_X  = cleanNumber(tokens[1]);
+        WORLD_LOW_Y  = cleanNumber(tokens[2]);
+        WORLD_HIGH_X = cleanNumber(tokens[3]);
+        WORLD_HIGH_Y = cleanNumber(tokens[4]);
+        WORLD_NEAR_Z = cleanNumber(tokens[5]);
+        WORLD_FAR_Z  = cleanNumber(tokens[6]);
 
 		worldToView = CTM.adjoint();
 		for(int i = 0; i < transformationStack.size(); i++) {
@@ -250,6 +254,7 @@ public class SimpInterpreter {
             transformationStack.set(i, t);
         }
         CTM = transformationStack.peek();
+        clipper = new Clipper(VIEW_PLANE, WORLD_LOW_X, WORLD_HIGH_X, WORLD_LOW_Y, WORLD_HIGH_Y, WORLD_NEAR_Z, WORLD_FAR_Z);
 		// TODO: pass params to clippers....
 	}
 
@@ -309,24 +314,36 @@ public class SimpInterpreter {
 	}
 
 	private void line(Vertex3D p1, Vertex3D p2) {
-		Vertex3D screenP1 = transformToScreen(p1);
-		Vertex3D screenP2 = transformToScreen(p2);
-		renderers.getLineRenderer().drawLine(screenP1, screenP2, drawable);
+        Line line  = new Line(p1, p2);
+        line = clipper.clipZ(line);
+        if(line != null) {
+            Vertex3D screenP1 = transformToScreen(line.p1);
+            Vertex3D screenP2 = transformToScreen(line.p2);
+            renderers.getLineRenderer().drawLine(screenP1, screenP2, drawable);
+        }
 	}
 
 	private void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
-		Vertex3D screenP1 = transformToScreen(p1);
-		Vertex3D screenP2 = transformToScreen(p2);
-		Vertex3D screenP3 = transformToScreen(p3);
+	    Polygon polygon = Polygon.make(p1, p2, p3);
+	    Polygon clipped = clipper.clipZ(polygon);
 
-        PolygonRenderer renderer;
-        if(renderStyle == RenderStyle.FILLED) {
-            renderer = renderers.getFilledRenderer();
-        } else {
-            renderer = renderers.getWireframeRenderer();
+	    if(clipped != null) {
+            ArrayList<Vertex3D> vertices = new ArrayList<>();
+            // transform clipped vertices
+            for (int i = 0; i < clipped.length(); i++) {
+                Vertex3D v = transformToScreen(clipped.get(i));
+                vertices.add(v);
+            }
+
+            PolygonRenderer renderer;
+            if (renderStyle == RenderStyle.FILLED) {
+                renderer = renderers.getFilledRenderer();
+            } else {
+                renderer = renderers.getWireframeRenderer();
+            }
+            polygon = Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
+            renderer.drawPolygon(polygon, drawable);
         }
-        Polygon p = Polygon.make(screenP1, screenP2, screenP3);
-        renderer.drawPolygon(p, drawable);
 	}
 
 	private Vertex3D transformToScreen(Vertex3D vertex) {
