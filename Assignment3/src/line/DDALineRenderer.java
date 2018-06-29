@@ -36,12 +36,12 @@ public class DDALineRenderer implements LineRenderer {
         int argbColor = new Color(r, g, b).asARGB();
         drawable.setPixelWithCoverage(x_round, y_round, z, argbColor, COVERAGE);
 
-        double steps;
+        int steps;
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            steps = Math.abs(deltaX);
+            steps = (int)Math.abs(deltaX);
         }
         else {
-            steps = Math.abs(deltaY);
+            steps = (int)Math.abs(deltaY);
         }
 
         if(steps != 0) {

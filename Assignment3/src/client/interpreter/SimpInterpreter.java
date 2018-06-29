@@ -7,13 +7,11 @@ import java.util.Stack;
 
 import client.Clipper;
 import client.RendererTrio;
-import geometry.Line;
-import geometry.Point3DH;
-import geometry.Vertex3D;
-import geometry.Transformation;
+import geometry.*;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
 import windowing.drawable.Drawable;
+import windowing.drawable.TranslatingDrawable;
 import windowing.graphics.Color;
 import windowing.graphics.Dimensions;
 
@@ -31,13 +29,15 @@ public class SimpInterpreter {
 
 	private Transformation CTM;
 	private Transformation worldToView;
-	private Transformation worldToScreen;
+	private Transformation projectedToScreen;
+	private Transformation viewToScreen;
+
 	private Stack<Transformation> transformationStack;
 
-	private static double WORLD_LOW_X = -1;
-	private static double WORLD_HIGH_X = 1;
-	private static double WORLD_LOW_Y = -1;
-	private static double WORLD_HIGH_Y = 1;
+	private static double WORLD_LOW_X = -100;
+	private static double WORLD_HIGH_X = 100;
+	private static double WORLD_LOW_Y = -100;
+	private static double WORLD_HIGH_Y = 100;
 	private static double WORLD_NEAR_Z = 0;
 	private static double WORLD_FAR_Z = -200;
 
@@ -65,24 +65,27 @@ public class SimpInterpreter {
         transformationStack = new Stack<>();
         CTM = Transformation.identity();
         worldToView = Transformation.identity();
-        makeWorldToScreenTransform(drawable.getDimensions());
-        clipper = new Clipper(VIEW_PLANE, WORLD_LOW_X, WORLD_HIGH_X, WORLD_LOW_Y, WORLD_HIGH_Y, WORLD_NEAR_Z, WORLD_FAR_Z);
-
+        makeProjectedToScreenTransform(drawable.getDimensions());
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
 	}
 
-	private void makeWorldToScreenTransform(Dimensions dimensions) {
-        double scaleX = (double)dimensions.getWidth() / (double)(WORLD_HIGH_X - WORLD_LOW_X) ;
-        double scaleY = (double)dimensions.getHeight() / (double)(WORLD_HIGH_Y - WORLD_LOW_Y);
-        double transX = (double)dimensions.getWidth() / 2.0;
-        double transY = (double)dimensions.getHeight() / 2.0;
+	private void makeProjectedToScreenTransform(Dimensions dimensions) {
+        double scaleX;
+        double scaleY;
+        double transX;
+        double transY;
+        scaleX = dimensions.getWidth() / (WORLD_HIGH_X - WORLD_LOW_X);
+        scaleY = dimensions.getHeight() / (WORLD_HIGH_Y - WORLD_LOW_Y);
+        transX = (dimensions.getWidth() - (WORLD_HIGH_X + WORLD_LOW_X)) / 2.0;
+        transY = (dimensions.getHeight() - (WORLD_HIGH_Y + WORLD_LOW_Y)) / 2.0;
 
-        worldToScreen = Transformation.identity();
-        worldToScreen.postMultiply(Transformation.translate(transX, transY, 0));
-        worldToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
-        worldToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
+
+        projectedToScreen = Transformation.identity();
+        projectedToScreen.postMultiply(Transformation.translate(transX, transY, 0));
+        projectedToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
+        projectedToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
 	}
 
 	public void interpret() {
@@ -247,6 +250,7 @@ public class SimpInterpreter {
         WORLD_NEAR_Z = cleanNumber(tokens[5]);
         WORLD_FAR_Z  = cleanNumber(tokens[6]);
 
+
 		worldToView = CTM.adjoint();
 		for(int i = 0; i < transformationStack.size(); i++) {
             Transformation t = transformationStack.elementAt(i);
@@ -254,8 +258,39 @@ public class SimpInterpreter {
             transformationStack.set(i, t);
         }
         CTM = transformationStack.peek();
-        clipper = new Clipper(VIEW_PLANE, WORLD_LOW_X, WORLD_HIGH_X, WORLD_LOW_Y, WORLD_HIGH_Y, WORLD_NEAR_Z, WORLD_FAR_Z);
-		// TODO: pass params to clippers....
+
+
+		if(WORLD_HIGH_X - WORLD_LOW_X != WORLD_HIGH_Y - WORLD_LOW_Y) {
+		    double x = WORLD_HIGH_X - WORLD_LOW_X;
+		    double y = WORLD_HIGH_Y - WORLD_LOW_Y;
+		    double aspectRatio = x/y;
+            double originX = 0;
+            double originY = 0;
+		    double width;
+		    double height;
+
+		    if(aspectRatio > 1) {
+		        width = drawable.getWidth();
+		        height = width / aspectRatio;
+                originY = (drawable.getHeight() - height) / 2.0;
+            } else {
+		        height = drawable.getHeight();
+		        width = height * aspectRatio;
+                originX = (drawable.getWidth() - width) / 2.0;
+            }
+            drawable = new TranslatingDrawable(drawable, new Point2D(originX, originY), new Dimensions((int)width, (int)height));
+        }
+
+        makeProjectedToScreenTransform(drawable.getDimensions());
+
+		// clipping XY in device space????
+        // NOTE!!!: I am clipping with respect to the drawable......
+        clipper = new Clipper(0,
+                              0,
+                              drawable.getWidth() - 1,
+                              drawable.getHeight() - 1,
+                              WORLD_NEAR_Z,
+                              WORLD_FAR_Z);
 	}
 
     private void interpretSurface(String[] tokens) {
@@ -317,8 +352,8 @@ public class SimpInterpreter {
         Line line  = new Line(p1, p2);
         line = clipper.clipZ(line);
         if(line != null) {
-            Vertex3D screenP1 = transformToScreen(line.p1);
-            Vertex3D screenP2 = transformToScreen(line.p2);
+            Vertex3D screenP1 = projectToScreen(line.p1);
+            Vertex3D screenP2 = projectToScreen(line.p2);
             renderers.getLineRenderer().drawLine(screenP1, screenP2, drawable);
         }
 	}
@@ -331,25 +366,31 @@ public class SimpInterpreter {
             ArrayList<Vertex3D> vertices = new ArrayList<>();
             // transform clipped vertices
             for (int i = 0; i < clipped.length(); i++) {
-                Vertex3D v = transformToScreen(clipped.get(i));
+                Vertex3D v = projectToScreen(clipped.get(i));
                 vertices.add(v);
             }
 
-            PolygonRenderer renderer;
-            if (renderStyle == RenderStyle.FILLED) {
-                renderer = renderers.getFilledRenderer();
-            } else {
-                renderer = renderers.getWireframeRenderer();
-            }
             polygon = Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
-            renderer.drawPolygon(polygon, drawable);
+            clipped = clipper.clipX(polygon);
+            if(clipped != null) {
+                clipped = clipper.clipY(clipped);
+            }
+
+            if(clipped != null) {
+                PolygonRenderer renderer;
+                if (renderStyle == RenderStyle.FILLED) {
+                    renderer = renderers.getFilledRenderer();
+                } else {
+                    renderer = renderers.getWireframeRenderer();
+                }
+                renderer.drawPolygon(clipped, drawable);
+            }
         }
 	}
 
-	private Vertex3D transformToScreen(Vertex3D vertex) {
-		// project to screen
+	private Vertex3D projectToScreen(Vertex3D vertex) {
         double z = vertex.getZ();
-        Vertex3D out = worldToScreen.multiplyVertex(vertex);
+        Vertex3D out = projectedToScreen.multiplyVertex(vertex);
         out = out.euclidean();
         out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
 		return out;

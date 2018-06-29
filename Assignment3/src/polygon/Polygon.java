@@ -33,6 +33,24 @@ public class Polygon extends Chain {
 		return new Polygon(initialVertices);
 	}
 
+	public static ArrayList<Polygon> retriangulate(Polygon polygon) {
+		ArrayList<Polygon> polygons = new ArrayList<>();
+
+		if (polygon.length() > 3) {
+
+			Vertex3D anchor =polygon.get(0);
+			// TODO: Triangulate if polygon has more than 3 vertices
+			for(int i = 1; i < polygon.length(); i++) {
+				Vertex3D v1 = polygon.get(i);
+				Vertex3D v2 = polygon.get(i+1);
+				polygons.add(Polygon.make(anchor, v1, v2));
+			}
+		} else {
+			polygons.add(polygon);
+		}
+		return polygons;
+	}
+
 	public static Polygon makeEnsuringCounterClockwise(Vertex3D... initialVertices) {
 		if(isClockwise(initialVertices[0], initialVertices[1], initialVertices[2])) {
 			return new Polygon(reverseArray(initialVertices));

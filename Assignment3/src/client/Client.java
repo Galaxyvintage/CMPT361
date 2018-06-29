@@ -31,23 +31,19 @@ public class Client implements PageTurner {
 
     Client(Drawable drawable, String[] args) {
     	if(args.length > 0) {
-    		// Bad magic number....but this will do for now...
     		this.filename = args[0];
     		hasArgument = true;
 		}
 		this.drawable = drawable;
 		this.renderers = new RendererTrio();
 		createDrawables();
-//		Icosahedron icosahedron = new Icosahedron();
-//		icosahedron.outputFaces();
-//		Cylinder cylinder = new Cylinder();
-//		cylinder.outputFaces();
 	}
 
 	private void createDrawables() {
 		image = new TranslatingDrawable(drawable, point(0, 0), dimensions(750, 750));
+        image = new InvertedYDrawable(image);
 		image = new ColoredDrawable(image, ARGB_WHITE);
-		image = new InvertedYDrawable(image);
+
 		fullPanel = new TranslatingDrawable(image, point(50, 50), PANEL_SIZE);
         fullPanel = new ZBufferDrawable(fullPanel);
 	}
@@ -100,59 +96,12 @@ public class Client implements PageTurner {
 			default: defaultPage();
 				return;
 		}
-		// TODO: implement clippper and replace this
-        depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.RED);
+		// TODO: implement clippper on XY and replace this
+        depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
 		interpreter = new SimpInterpreter("simp/" + filename + ".simp", depthCueingDrawable, renderers);
 		interpreter.interpret();
 	}
 
-//	@Override
-//	public void nextPage() {
-//		Drawable depthCueingDrawable;
-//		System.out.println("PageNumber " + (pageNumber + 1));
-//		pageNumber = (pageNumber + 1) % NUM_PAGES;
-//
-//		image.clear();
-//		fullPanel.clear();
-//
-//		switch(pageNumber) {
-//			case 1:  new MeshPolygonTest(fullPanel, renderers.getWireframeRenderer(), MeshPolygonTest.USE_PERTURBATION);
-//				break;
-//			case 2:  new MeshPolygonTest(fullPanel, renderers.getFilledRenderer(), MeshPolygonTest.USE_PERTURBATION);
-//				break;
-//			case 3:	 new CenteredTriangleTest(fullPanel, renderers.getFilledRenderer());
-//				break;
-//			case 4:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
-//				interpreter = new SimpInterpreter("simp/page4.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//
-//			case 5:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.RED);
-//				interpreter = new SimpInterpreter("simp_old/page5.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//
-//			case 6:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//				System.out.println("Working Directory = " + System.getProperty("user.dir"));
-//				interpreter = new SimpInterpreter("simp_old/page6.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//
-//			case 7:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//                interpreter = new SimpInterpreter("simp_old/page7.simp", depthCueingDrawable, renderers);
-//                interpreter.interpret();
-//                break;
-//
-//			case 0:  depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.WHITE);
-//				interpreter = new SimpInterpreter("simp_old/page8.simp", depthCueingDrawable, renderers);
-//				interpreter.interpret();
-//				break;
-//			default:
-//			    defaultPage();
-//				break;
-//		}
-//	}
-//
     private void defaultPage() {
         image.clear();
         fullPanel.clear();

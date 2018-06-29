@@ -23,7 +23,7 @@ public class DepthCueingDrawable extends DrawableDecorator {
         // interpolate Color based on z
         double height = delegate.getDimensions().getHeight();
         double width = delegate.getDimensions().getWidth();
-        if(z < farZ || z >= nearZ || x < 0 || x >= width || y < 0 || y >= height ) {
+        if(y < 0 || y >= height ) {
             return;
         }
 
@@ -36,7 +36,7 @@ public class DepthCueingDrawable extends DrawableDecorator {
     public void setPixelWithCoverage(int x, int y, double z, int argbColor, double coverage) {
         double height = delegate.getDimensions().getHeight();
         double width = delegate.getDimensions().getWidth();
-        if(z < farZ || z >= nearZ || x < 0 || x >= width || y < 0 || y >= height ) {
+        if(y < 0 || y >= height ) {
             return;
         }
 
