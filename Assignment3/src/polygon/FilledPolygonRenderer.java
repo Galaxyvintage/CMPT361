@@ -42,7 +42,10 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                 double Z = v.getZ();
                 v = v.replacePoint(new Point3DH(v.getX(),
                                                 v.getY(),
-                                                1 / Z));
+                                                1/Z));
+//                v = v.replaceColor(new Color(v.getColor().getR() / Z,
+//                                             v.getColor().getG() / Z,
+//                                             v.getColor().getB() / Z));
                 vertices.add(v);
             }
 
@@ -109,8 +112,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             double RGreen = RTopVertex.getColor().getG();
             double RBlue = RTopVertex.getColor().getB();
 
-            // Assuming all vertices have the same z value
-            double z = LTopVertex.getZ();
 
             double LDeltaX, LDeltaY, LDeltaZ;
             double LDeltaR, LDeltaG, LDeltaB;
@@ -268,7 +269,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                         break;
                     }
                     Color color = new Color(R1, G1, B1);
-                    drawable.setPixelWithCoverage(i, j, Z1, color.asARGB(), COVERAGE);
+                    drawable.setPixelWithCoverage(i, j, 1/Z1, color.asARGB(), COVERAGE);
                     Z1 += ((RZ - LZ) / (double) (X2 - X1));
                     R1 += ((RRed - LRed) / (double) (X2 - X1));
                     G1 += ((RGreen - LGreen) / (double) (X2 - X1));

@@ -32,7 +32,6 @@ public class SimpInterpreter {
 	private Transformation CTM;
 	private Transformation worldToView;
 	private Transformation projectedToScreen;
-	private Transformation viewToScreen;
 
 	private Stack<Transformation> transformationStack;
 
@@ -313,7 +312,7 @@ public class SimpInterpreter {
         double r = cleanNumber(tokens[3]);
         double g = cleanNumber(tokens[4]);
         double b = cleanNumber(tokens[5]);
-        drawable = new DepthCueingDrawable(drawable, (int)near, (int)far, new Color(r, g, b));
+        drawable = new DepthCueingDrawable(drawable, near, far, new Color(r, g, b));
     }
 
 	public Vertex3D[] interpretVertices(String[] tokens, int numVertices, int startingIndex) {

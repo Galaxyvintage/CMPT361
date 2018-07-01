@@ -3,7 +3,7 @@ package windowing.drawable;
 
 public class ZBufferDrawable extends DrawableDecorator {
 
-    private static final double DEFAULT_Z = -201;
+    private static final double DEFAULT_Z = -Double.MAX_VALUE;
     private double[][] zBuffer;
 
     public ZBufferDrawable(Drawable delegate) {
@@ -15,13 +15,9 @@ public class ZBufferDrawable extends DrawableDecorator {
 
     @Override
     public void setPixel(int x, int y, double z, int argbColor) {
-        double csz = 1/z;
-        if (csz > zBuffer[x][y]) {
+        if (z > zBuffer[x][y]) {
+            zBuffer[x][y] = z;
             delegate.setPixel(x, y, z, argbColor);
-            zBuffer[x][y] = csz;
-        }
-        else {
-//            System.out.println(z);
         }
     }
 

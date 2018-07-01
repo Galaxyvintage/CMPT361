@@ -3,9 +3,9 @@ package client;
 
 import geometry.Line;
 import geometry.Point3DH;
-import geometry.Vertex;
 import geometry.Vertex3D;
 import polygon.Polygon;
+import windowing.graphics.Color;
 
 import java.util.ArrayList;
 
@@ -16,8 +16,6 @@ public class Clipper {
     private double botY;
     private double rightX;
     private double topY;
-
-
     private double nearZ;
     private double farZ;
 
@@ -32,10 +30,19 @@ public class Clipper {
 
     public Line clipXY(Line line) {
         Line ret = line;
+        // TODO: use outcode and pipeline clipping
         ret = clipXHelper(ret, leftX);
         ret = clipXHelper(ret, rightX);
         ret = clipYHelper(ret, topY);
         ret = clipYHelper(ret, botY);
+        return ret;
+    }
+
+    public Line clipZ(Line line) {
+        Line ret = line;
+
+        ret = clipZHelper(ret, nearZ);
+        ret = clipZHelper(ret, farZ);
         return ret;
     }
 
@@ -64,7 +71,6 @@ public class Clipper {
         return p;
     }
 
-
     public Polygon clipY(Polygon polygon) {
         boolean allLessThanBot = true;
         boolean allGreaterThanTop = true;
@@ -88,13 +94,6 @@ public class Clipper {
         p = clipYHelper(p, topY);
         p = clipYHelper(p, botY);
         return p;
-    }
-
-    public Line clipZ(Line line) {
-        Line ret = line;
-        ret = clipZHelper(ret, nearZ);
-        ret = clipZHelper(ret, farZ);
-        return ret;
     }
 
     public Polygon clipZ(Polygon polygon) {
@@ -153,23 +152,45 @@ public class Clipper {
             double deltaXX;
             double deltaYY;
             double deltaZZ;
+            double deltaR;
+            double deltaG;
+            double deltaB;
+            double deltaRR;
+            double deltaGG;
+            double deltaBB;
 
             if (plane == leftX || plane == rightX) {
                 deltaX = right.getX() - left.getX();
                 deltaY = right.getY() - left.getY();
-                deltaZ = right.getZ() - left.getZ();
+                deltaZ = 1/right.getZ() - 1/left.getZ();
+                deltaR = right.getColor().getR() - left.getColor().getR();
+                deltaG = right.getColor().getG() - left.getColor().getG();
+                deltaB = right.getColor().getB() - left.getColor().getB();
+
                 if (plane == leftX && x1 < leftX) {
                     deltaXX =  leftX - x1;
                     deltaYY = (deltaY / deltaX) * deltaXX;
                     deltaZZ = (deltaZ / deltaX) * deltaXX;
-                    left = left.replacePoint(new Point3DH(leftX, left.getY() + deltaYY, left.getZ() + deltaZZ));
+                    deltaRR = (deltaR / deltaX) * deltaXX;
+                    deltaGG = (deltaG / deltaX) * deltaXX;
+                    deltaBB = (deltaB / deltaX) * deltaXX;
+                    left = left.replacePoint(new Point3DH(leftX, left.getY() + deltaYY, 1/(1/left.getZ() + deltaZZ)));
+                    left = left.replaceColor(new Color(left.getColor().getR() + deltaRR,
+                                                       left.getColor().getG() + deltaGG,
+                                                       left.getColor().getB() + deltaBB));
                 }
 
                 if (plane == rightX && x2 > rightX) {
                     deltaXX =  rightX - x1;
                     deltaYY = (deltaY / deltaX) * deltaXX;
                     deltaZZ = (deltaZ / deltaX) * deltaXX;
-                    right = right.replacePoint(new Point3DH(rightX, left.getY() + deltaYY, left.getZ() + deltaZZ));
+                    deltaRR = (deltaR / deltaX) * deltaXX;
+                    deltaGG = (deltaG / deltaX) * deltaXX;
+                    deltaBB = (deltaB / deltaX) * deltaXX;
+                    right = right.replacePoint(new Point3DH(rightX, left.getY() + deltaYY, 1/(1/left.getZ() + deltaZZ)));
+                    right = right.replaceColor(new Color(left.getColor().getR() + deltaRR,
+                                                         left.getColor().getG() + deltaGG,
+                                                         left.getColor().getB() + deltaBB));
                 }
             }
 
@@ -216,28 +237,48 @@ public class Clipper {
             double deltaX;
             double deltaY;
             double deltaZ;
-
             double deltaXX;
             double deltaYY;
             double deltaZZ;
+            double deltaR;
+            double deltaG;
+            double deltaB;
+            double deltaRR;
+            double deltaGG;
+            double deltaBB;
 
             if (plane == botY || plane == topY) {
                 deltaX = second.getX() - first.getX();
                 deltaY = second.getY() - first.getY();
-                deltaZ = second.getZ() - first.getZ();
+                deltaZ = 1/second.getZ() - 1/first.getZ();
+                deltaR = second.getColor().getR() - first.getColor().getR();
+                deltaG = second.getColor().getG() - first.getColor().getG();
+                deltaB = second.getColor().getB() - first.getColor().getB();
 
                 if (plane == botY && y1 < botY) {
                     deltaYY =  botY - y1;
                     deltaXX = (deltaX / deltaY) * deltaYY;
                     deltaZZ = (deltaZ / deltaY) * deltaYY;
-                    first = first.replacePoint(new Point3DH(first.getX() + deltaXX, botY, first.getZ() + deltaZZ));
+                    deltaRR = (deltaR / deltaY) * deltaYY;
+                    deltaGG = (deltaG / deltaY) * deltaYY;
+                    deltaBB = (deltaB / deltaY) * deltaYY;
+                    first = first.replacePoint(new Point3DH(first.getX() + deltaXX, botY, 1/(1/first.getZ() + deltaZZ)));
+                    first = first.replaceColor(new Color(first.getColor().getR() + deltaRR,
+                                                         first.getColor().getG() + deltaGG,
+                                                         first.getColor().getB() + deltaBB));
                 }
 
                 if (plane == topY && y2 > topY) {
                     deltaYY =  topY - y1;
                     deltaXX = (deltaX / deltaY) * deltaYY;
                     deltaZZ = (deltaZ / deltaY) * deltaYY;
-                    second = second.replacePoint(new Point3DH(first.getX() + deltaXX, topY, first.getZ() + deltaZZ));
+                    deltaRR = (deltaR / deltaY) * deltaYY;
+                    deltaGG = (deltaG / deltaY) * deltaYY;
+                    deltaBB = (deltaB / deltaY) * deltaYY;
+                    second = second.replacePoint(new Point3DH(first.getX() + deltaXX, topY, 1/(1/first.getZ() + deltaZZ)));
+                    second = second.replaceColor(new Color(first.getColor().getR() + deltaRR,
+                                                           first.getColor().getG() + deltaGG,
+                                                           first.getColor().getB() + deltaBB));
                 }
             }
 
@@ -281,7 +322,6 @@ public class Clipper {
             z1 = near.getZ();
             z2 = far.getZ();
 
-            // clip far plane
             if (plane == nearZ || plane == farZ) {
                 double deltaZ;
                 double deltaZZ;
@@ -290,22 +330,45 @@ public class Clipper {
                 double deltaY;
                 double deltaXX;
                 double deltaYY;
+                double deltaR;
+                double deltaG;
+                double deltaB;
+                double deltaRR;
+                double deltaGG;
+                double deltaBB;
 
+                deltaZ = z2 - z1;
                 deltaX = far.getX() - near.getX();
                 deltaY = far.getY() - near.getY();
-                deltaZ = z2 - z1;
+                deltaR = far.getColor().getR() - near.getColor().getR();
+                deltaG = far.getColor().getG() - near.getColor().getG();
+                deltaB = far.getColor().getB() - near.getColor().getB();
+
+
                 if (plane == farZ && z2 < farZ) {
                     deltaZZ = farZ - z1;
                     deltaXX = (deltaX / deltaZ) * deltaZZ;
                     deltaYY = (deltaY / deltaZ) * deltaZZ;
+                    deltaRR = (deltaR / deltaZ) * deltaZZ;
+                    deltaGG = (deltaG / deltaZ) * deltaZZ;
+                    deltaBB = (deltaB / deltaZ) * deltaZZ;
                     far = far.replacePoint(new Point3DH(near.getX() + deltaXX, near.getY() + deltaYY, farZ));
+                    far = far.replaceColor(new Color(near.getColor().getR() + deltaRR,
+                                                     near.getColor().getG() + deltaGG,
+                                                     near.getColor().getB() + deltaBB));
                 }
 
                 if (plane == nearZ && z1 > nearZ) {
                     deltaZZ = nearZ - z1;
                     deltaXX = (deltaX / deltaZ) * deltaZZ;
                     deltaYY = (deltaY / deltaZ) * deltaZZ;
+                    deltaRR = (deltaR / deltaZ) * deltaZZ;
+                    deltaGG = (deltaG / deltaZ) * deltaZZ;
+                    deltaBB = (deltaB / deltaZ) * deltaZZ;
                     near = near.replacePoint(new Point3DH(near.getX() + deltaXX, near.getY() + deltaYY, nearZ));
+                    near = near.replaceColor(new Color(near.getColor().getR() + deltaRR,
+                                                       near.getColor().getG() + deltaGG,
+                                                       near.getColor().getB() + deltaBB));
                 }
             }
 
