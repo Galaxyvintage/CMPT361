@@ -10,6 +10,8 @@ import client.RendererTrio;
 import geometry.*;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
+import polygon.Shader;
+import windowing.drawable.DepthCueingDrawable;
 import windowing.drawable.Drawable;
 import windowing.drawable.TranslatingDrawable;
 import windowing.graphics.Color;
@@ -128,7 +130,7 @@ public class SimpInterpreter {
 		case "camera" :		interpretCamera(tokens);	break;
 		case "surface" :	interpretSurface(tokens);	break;
 		case "ambient" :	interpretAmbient(tokens);	break;
-//		case "depth" :		interpretDepth(tokens);		break;
+		case "depth" :		interpretDepth(tokens);		break;
 //		case "obj" :		interpretObj(tokens);		break;
 
 		default :
@@ -250,7 +252,6 @@ public class SimpInterpreter {
         WORLD_NEAR_Z = cleanNumber(tokens[5]);
         WORLD_FAR_Z  = cleanNumber(tokens[6]);
 
-
 		worldToView = CTM.adjoint();
 		for(int i = 0; i < transformationStack.size(); i++) {
             Transformation t = transformationStack.elementAt(i);
@@ -258,7 +259,6 @@ public class SimpInterpreter {
             transformationStack.set(i, t);
         }
         CTM = transformationStack.peek();
-
 
 		if(WORLD_HIGH_X - WORLD_LOW_X != WORLD_HIGH_Y - WORLD_LOW_Y) {
 		    double x = WORLD_HIGH_X - WORLD_LOW_X;
@@ -294,11 +294,26 @@ public class SimpInterpreter {
 	}
 
     private void interpretSurface(String[] tokens) {
-	    //TODO:
+        double r = cleanNumber(tokens[1]);
+        double g = cleanNumber(tokens[2]);
+        double b = cleanNumber(tokens[3]);
+        defaultColor = new Color(r, g, b);
     }
 
     private void interpretAmbient(String[] tokens) {
-        //TODO:
+        double r = cleanNumber(tokens[1]);
+        double g = cleanNumber(tokens[2]);
+        double b = cleanNumber(tokens[3]);
+        ambientLight = new Color(r, g, b);
+    }
+
+    private void interpretDepth(String[] tokens) {
+        double near = cleanNumber(tokens[1]);
+        double far = cleanNumber(tokens[2]);
+        double r = cleanNumber(tokens[3]);
+        double g = cleanNumber(tokens[4]);
+        double b = cleanNumber(tokens[5]);
+        drawable = new DepthCueingDrawable(drawable, (int)near, (int)far, new Color(r, g, b));
     }
 
 	public Vertex3D[] interpretVertices(String[] tokens, int numVertices, int startingIndex) {
@@ -359,7 +374,7 @@ public class SimpInterpreter {
 	}
 
 	private void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
-	    Polygon polygon = Polygon.make(p1, p2, p3);
+ 	    Polygon polygon = Polygon.make(p1, p2, p3);
 	    Polygon clipped = clipper.clipZ(polygon);
 
 	    if(clipped != null) {
@@ -380,10 +395,12 @@ public class SimpInterpreter {
                 PolygonRenderer renderer;
                 if (renderStyle == RenderStyle.FILLED) {
                     renderer = renderers.getFilledRenderer();
+                    Shader ambientShader = c -> ambientLight.multiply(c);
+                    renderer.drawPolygon(clipped, drawable, ambientShader);
                 } else {
                     renderer = renderers.getWireframeRenderer();
+                    renderer.drawPolygon(clipped, drawable);
                 }
-                renderer.drawPolygon(clipped, drawable);
             }
         }
 	}
@@ -392,7 +409,7 @@ public class SimpInterpreter {
         double z = vertex.getZ();
         Vertex3D out = projectedToScreen.multiplyVertex(vertex);
         out = out.euclidean();
-        out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
+        out = out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
 		return out;
 
 	}

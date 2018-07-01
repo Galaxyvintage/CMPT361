@@ -1,5 +1,6 @@
 package polygon;
 
+import geometry.Point3DH;
 import geometry.Vertex3D;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
@@ -16,7 +17,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
     public static FilledPolygonRenderer make() { return new FilledPolygonRenderer();}
 
     // TODO: Need to optimize and clean up
-
     public void drawPolygon(Polygon polygon, Drawable drawable, Shader vertexShader) {
 
         ArrayList<Polygon> polygons = new ArrayList<>();
@@ -36,6 +36,17 @@ public class FilledPolygonRenderer implements PolygonRenderer {
 
         for (int k = 0; k < polygons.size(); k++) {
             Polygon currentPolygon = polygons.get(k);
+            ArrayList<Vertex3D> vertices = new ArrayList<>();
+            for(int i = 0; i < currentPolygon.length(); i++) {
+                Vertex3D v = currentPolygon.get(i);
+                double Z = v.getZ();
+                v = v.replacePoint(new Point3DH(v.getX(),
+                                                v.getY(),
+                                                1 / Z));
+                vertices.add(v);
+            }
+
+            currentPolygon = Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
             Chain LChain = currentPolygon.leftChain();
             Chain RChain = currentPolygon.rightChain();
 
@@ -56,8 +67,8 @@ public class FilledPolygonRenderer implements PolygonRenderer {
 
             double LX = LTopVertex.getIntX();
             double RX = RTopVertex.getIntX();
-            double LZ = LTopVertex.getIntZ();
-            double RZ = LTopVertex.getIntZ();
+            double LZ = LTopVertex.getZ();
+            double RZ = LTopVertex.getZ();
 
 
             // Finding which vertex is the mid vertex
@@ -115,21 +126,21 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             if (MidVertexSide == LEFT) {
                 LDeltaX = MidVertex.getIntX() - LTopVertex.getIntX();
                 LDeltaY = MidVertex.getIntY() - LTopVertex.getIntY();
-                LDeltaZ = MidVertex.getIntZ() - LTopVertex.getIntZ();
+                LDeltaZ = MidVertex.getZ() - LTopVertex.getZ();
                 LDeltaR = MidVertex.getColor().getR() - LTopVertex.getColor().getR();
                 LDeltaG = MidVertex.getColor().getG() - LTopVertex.getColor().getG();
                 LDeltaB = MidVertex.getColor().getB() - LTopVertex.getColor().getB();
 
                 RDeltaX = RBotVertex.getIntX() - RTopVertex.getIntX();
                 RDeltaY = RBotVertex.getIntY() - RTopVertex.getIntY();
-                RDeltaZ = RBotVertex.getIntZ() - RTopVertex.getIntZ();
+                RDeltaZ = RBotVertex.getZ() - RTopVertex.getZ();
                 RDeltaR = RBotVertex.getColor().getR() - RTopVertex.getColor().getR();
                 RDeltaG = RBotVertex.getColor().getG() - RTopVertex.getColor().getG();
                 RDeltaB = RBotVertex.getColor().getB() - RTopVertex.getColor().getB();
 
                 DeltaX = LBotVertex.getIntX() - MidVertex.getIntX();
                 DeltaY = LBotVertex.getIntY() - MidVertex.getIntY();
-                DeltaZ = LBotVertex.getIntZ() - MidVertex.getIntZ();
+                DeltaZ = LBotVertex.getZ() - MidVertex.getZ();
                 DeltaR = LBotVertex.getColor().getR() - MidVertex.getColor().getR();
                 DeltaG = LBotVertex.getColor().getG() - MidVertex.getColor().getG();
                 DeltaB = LBotVertex.getColor().getB() - MidVertex.getColor().getB();
@@ -141,21 +152,21 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             } else {
                 LDeltaX = LBotVertex.getIntX() - LTopVertex.getIntX();
                 LDeltaY = LBotVertex.getIntY() - LTopVertex.getIntY();
-                LDeltaZ = LBotVertex.getIntZ() - LTopVertex.getIntZ();
+                LDeltaZ = LBotVertex.getZ() - LTopVertex.getZ();
                 LDeltaR = LBotVertex.getColor().getR() - LTopVertex.getColor().getR();
                 LDeltaG = LBotVertex.getColor().getG() - LTopVertex.getColor().getG();
                 LDeltaB = LBotVertex.getColor().getB() - LTopVertex.getColor().getB();
 
                 RDeltaX = MidVertex.getIntX() - RTopVertex.getIntX();
                 RDeltaY = MidVertex.getIntY() - RTopVertex.getIntY();
-                RDeltaZ = MidVertex.getIntZ() - RTopVertex.getIntZ();
+                RDeltaZ = MidVertex.getZ() - RTopVertex.getZ();
                 RDeltaR = MidVertex.getColor().getR() - RTopVertex.getColor().getR();
                 RDeltaG = MidVertex.getColor().getG() - RTopVertex.getColor().getG();
                 RDeltaB = MidVertex.getColor().getB() - RTopVertex.getColor().getB();
 
                 DeltaX = RBotVertex.getIntX() - MidVertex.getIntX();
                 DeltaY = RBotVertex.getIntY() - MidVertex.getIntY();
-                DeltaZ = RBotVertex.getIntZ() - MidVertex.getIntZ();
+                DeltaZ = RBotVertex.getZ() - MidVertex.getZ();
                 DeltaR = RBotVertex.getColor().getR() - MidVertex.getColor().getR();
                 DeltaG = RBotVertex.getColor().getG() - MidVertex.getColor().getG();
                 DeltaB = RBotVertex.getColor().getB() - MidVertex.getColor().getB();
@@ -210,7 +221,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                         LDeltaB = DeltaB;
 
                         LX = MidVertex.getIntX();
-                        LZ = MidVertex.getIntZ();
+                        LZ = MidVertex.getZ();
                         LRed = MidVertex.getColor().getR();
                         LGreen = MidVertex.getColor().getG();
                         LBlue = MidVertex.getColor().getB();
@@ -230,7 +241,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                         RDeltaB = DeltaB;
 
                         RX = MidVertex.getIntX();
-                        RZ = MidVertex.getIntZ();
+                        RZ = MidVertex.getZ();
                         RRed = MidVertex.getColor().getR();
                         RGreen = MidVertex.getColor().getG();
                         RBlue = MidVertex.getColor().getB();

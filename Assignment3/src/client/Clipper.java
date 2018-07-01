@@ -154,7 +154,6 @@ public class Clipper {
             double deltaYY;
             double deltaZZ;
 
-            // clip far plane
             if (plane == leftX || plane == rightX) {
                 deltaX = right.getX() - left.getX();
                 deltaY = right.getY() - left.getY();

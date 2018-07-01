@@ -18,31 +18,31 @@
     {
         translate 44 0 -80
         scale 10 10 40
-      surface 1.0 0.5 0.5
+        surface 1.0 0.5 0.5
         file "cube"
     }
     {
         translate 40 0 -80
         scale 10 10 40
-      surface 0.5 1.0 0.5
+        surface 0.5 1.0 0.5
         file "cube"
     }
     {
         translate 0 44 -80
         scale 10 10 40
-      surface 1.0 0.5 0.5
+        surface 1.0 0.5 0.5
         file "cube"
     }
     {
         translate -54 0 -80
         scale 10 10 40
-      surface 1.0 0.5 0.5
+        surface 1.0 0.5 0.5
         file "cube"
     }
     {
         translate 0 -54 -80
         scale 10 10 40
-      surface 1.0 0.5 0.5
+        surface 1.0 0.5 0.5
         file "cube"
     }
 
@@ -55,8 +55,8 @@
       polygon (-100 30 0) (80 -40 -201) (0 80 -290)
     }
 	{
-	 	surface 0.5 1.0 0.5
-		polygon (0.02 0 1) (80 -40 -201) (0 80 -290)
+	  surface 0.5 1.0 0.5
+	  polygon (0.02 0 1) (80 -40 -201) (0 80 -290)
 	}
 
 }

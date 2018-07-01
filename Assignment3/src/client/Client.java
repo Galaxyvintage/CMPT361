@@ -96,9 +96,7 @@ public class Client implements PageTurner {
 			default: defaultPage();
 				return;
 		}
-		// TODO: implement clippper on XY and replace this
-        depthCueingDrawable = new DepthCueingDrawable(fullPanel, 0, -200, Color.GREEN);
-		interpreter = new SimpInterpreter("simp/" + filename + ".simp", depthCueingDrawable, renderers);
+		interpreter = new SimpInterpreter("simp/" + filename + ".simp", fullPanel, renderers);
 		interpreter.interpret();
 	}
 
