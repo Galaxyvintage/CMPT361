@@ -28,7 +28,7 @@ public class DDALineRenderer implements LineRenderer {
 
         double r = p1.getColor().getR();
         double g = p1.getColor().getG();
-        double b = p1.getColor().getR();
+        double b = p1.getColor().getB();
 
 
         int x_round = (int)Math.round(x);
