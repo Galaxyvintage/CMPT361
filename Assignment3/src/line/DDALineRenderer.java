@@ -12,29 +12,30 @@ public class DDALineRenderer implements LineRenderer {
     // Assume octant 1
     @Override
     public void drawLine(Vertex3D p1, Vertex3D p2, Drawable drawable) {
-        // coordinate
-        double deltaX = p2.getX() - p1.getX();
-        double deltaY = p2.getY() - p1.getY();
-        double deltaZ = p2.getZ() - p1.getZ();
-
-        // color
-        double deltaR = p2.getColor().getR() - p1.getColor().getR();
-        double deltaG = p2.getColor().getG() - p1.getColor().getG();
-        double deltaB = p2.getColor().getB() - p1.getColor().getB();
 
         double x = p1.getX();
         double y = p1.getY();
-        double z = p1.getZ();
+        double z = 1/p1.getZ();
 
-        double r = p1.getColor().getR();
-        double g = p1.getColor().getG();
-        double b = p1.getColor().getB();
-
+        double r = p1.getColor().getR()/ p1.getZ();
+        double g = p1.getColor().getG()/ p1.getZ();
+        double b = p1.getColor().getB()/ p1.getZ();
 
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);
-        int argbColor = new Color(r, g, b).asARGB();
-        drawable.setPixelWithCoverage(x_round, y_round, z, argbColor, COVERAGE);
+        int argbColor = new Color(r/z, g/z, b/z).asARGB();
+        drawable.setPixelWithCoverage(x_round, y_round, 1/z, argbColor, COVERAGE);
+
+        // coordinate
+        double deltaX = p2.getX() - p1.getX();
+        double deltaY = p2.getY() - p1.getY();
+        double deltaZ = 1/p2.getZ() - 1/p1.getZ();
+
+        // color
+        double deltaR = p2.getColor().getR()/p2.getZ() - p1.getColor().getR()/p1.getZ();
+        double deltaG = p2.getColor().getG()/p2.getZ() - p1.getColor().getG()/p1.getZ();
+        double deltaB = p2.getColor().getB()/p2.getZ() - p1.getColor().getB()/p1.getZ();
+
 
         int steps;
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -62,8 +63,8 @@ public class DDALineRenderer implements LineRenderer {
 
                 x_round = (int) Math.round(x);
                 y_round = (int) Math.round(y);
-                argbColor = new Color(r, g, b).asARGB();
-                drawable.setPixelWithCoverage(x_round, y_round, z, argbColor, COVERAGE);
+                argbColor = new Color(r/z, g/z, b/z).asARGB();
+                drawable.setPixelWithCoverage(x_round, y_round, 1/z, argbColor, COVERAGE);
             }
         }
     }

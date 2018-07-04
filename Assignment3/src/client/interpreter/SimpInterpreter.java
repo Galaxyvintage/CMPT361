@@ -76,15 +76,18 @@ public class SimpInterpreter {
         double scaleY;
         double transX;
         double transY;
+        double transXToCenter = -1.0 * (WORLD_HIGH_X + WORLD_LOW_X) / 2.0;
+        double transYToCenter = -1.0 * (WORLD_HIGH_Y + WORLD_LOW_Y) / 2.0;
         scaleX = dimensions.getWidth() / (WORLD_HIGH_X - WORLD_LOW_X);
         scaleY = dimensions.getHeight() / (WORLD_HIGH_Y - WORLD_LOW_Y);
-        transX = (dimensions.getWidth() - (WORLD_HIGH_X + WORLD_LOW_X)) / 2.0;
-        transY = (dimensions.getHeight() - (WORLD_HIGH_Y + WORLD_LOW_Y)) / 2.0;
+        transX = dimensions.getWidth() / 2.0;
+        transY = dimensions.getHeight() / 2.0;
 
 
         projectedToScreen = Transformation.identity();
         projectedToScreen.postMultiply(Transformation.translate(transX, transY, 0));
         projectedToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
+        projectedToScreen.postMultiply(Transformation.translate(transXToCenter, transYToCenter, 0));
         projectedToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
 	}
 
