@@ -1,4 +1,4 @@
-package notProvided.client.interpreter;
+package client.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +42,7 @@ class ObjReader {
 	
 	private Polygon polygonForFace(ObjFace face) {
 		// TODO: This function might be used in render() above.  Implement it if you find it handy.
+		return null;
 	}
 
 	public void read() {
@@ -97,6 +98,7 @@ class ObjReader {
 		// TODO: write this.  subtokens[tokenIndex], if it exists, holds a string for an index.
 		// use Integer.parseInt() to get the integer value of the index.
 		// Be sure to handle both positive and negative indices.
+        return 0;
 	}
 
 	private void interpretObjNormal(String[] tokens) {

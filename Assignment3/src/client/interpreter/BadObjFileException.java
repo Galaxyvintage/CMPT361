@@ -1,4 +1,4 @@
-package notProvided.client.interpreter;
+package client.interpreter;
 
 public class BadObjFileException extends RuntimeException {
 	public BadObjFileException(String string) {

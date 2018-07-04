@@ -3,7 +3,6 @@ package client.interpreter;
 import java.util.ArrayList;
 import java.util.Stack;
 
-//import notProvided.client.Clipper;
 
 import client.Clipper;
 import client.RendererTrio;
@@ -208,7 +207,7 @@ public class SimpInterpreter {
         CTM.postMultiply(Transformation.rotate(rotateX, rotateY, rotateZ));
 	}
 
-	private double cleanNumber(String string) {
+	private static double cleanNumber(String string) {
 		return Double.parseDouble(string);
 	}
 
@@ -315,6 +314,35 @@ public class SimpInterpreter {
         drawable = new DepthCueingDrawable(drawable, near, far, new Color(r, g, b));
     }
 
+    private void objFile(String filename) {
+        ObjReader objReader = new ObjReader(filename, defaultColor);
+        objReader.read();
+        objReader.render();
+    }
+
+    public static Point3DH interpretPoint(String[] tokens, int startingIndex) {
+        double x = cleanNumber(tokens[startingIndex]);
+        double y = cleanNumber(tokens[startingIndex + 1]);
+        double z = cleanNumber(tokens[startingIndex + 2]);
+        return new Point3DH(x, y, z);
+    }
+
+    public static Color interpretColor(String[] tokens, int startingIndex) {
+        double r = cleanNumber(tokens[startingIndex]);
+        double g = cleanNumber(tokens[startingIndex + 1]);
+        double b = cleanNumber(tokens[startingIndex + 2]);
+        return new Color(r, g, b);
+    }
+
+    public static Point3DH interpretPointWithW(String[] tokens, int startingIndex) {
+        double x = cleanNumber(tokens[startingIndex]);
+        double y = cleanNumber(tokens[startingIndex + 1]);
+        double z = cleanNumber(tokens[startingIndex + 2]);
+        double w = cleanNumber(tokens[startingIndex + 3]);
+        Point3DH point = new Point3DH(x, y, z, w);
+        return point;
+    }
+
 	public Vertex3D[] interpretVertices(String[] tokens, int numVertices, int startingIndex) {
 		VertexColors vertexColors = verticesAreColored(tokens, numVertices);
 		Vertex3D vertices[] = new Vertex3D[numVertices];
@@ -346,20 +374,6 @@ public class SimpInterpreter {
 			color = interpretColor(tokens, startingIndex + NUM_TOKENS_FOR_POINT);
 		}
 		return new Vertex3D(point, color);
-	}
-
-	public Point3DH interpretPoint(String[] tokens, int startingIndex) {
-		double x = cleanNumber(tokens[startingIndex]);
-		double y = cleanNumber(tokens[startingIndex + 1]);
-		double z = cleanNumber(tokens[startingIndex + 2]);
-		return new Point3DH(x, y, z);
-	}
-
-	public Color interpretColor(String[] tokens, int startingIndex) {
-		double r = cleanNumber(tokens[startingIndex]);
-		double g = cleanNumber(tokens[startingIndex + 1]);
-		double b = cleanNumber(tokens[startingIndex + 2]);
-		return new Color(r, g, b);
 	}
 
 	private void line(Vertex3D p1, Vertex3D p2) {
