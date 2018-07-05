@@ -13,8 +13,26 @@ class ObjReader {
 	private static final int NOT_SPECIFIED = -1;
 
 	private class ObjVertex {
-		// TODO: fill this class in.  Store indices for a vertex, a texture, and a normal.  Have getters for them.
-		
+	    private int vertexIndex;
+        private int textureIndex;
+        private int normalIndex;
+        ObjVertex(int vertexIndex, int textureIndex, int normalIndex) {
+            this.vertexIndex = vertexIndex;
+            this.textureIndex = textureIndex;
+            this.normalIndex = normalIndex;
+        }
+
+        private int getVertexIndex() {
+            return vertexIndex;
+        }
+
+        private int getTextureIndex() {
+            return textureIndex;
+        }
+
+        private int getNormalIndex() {
+            return normalIndex;
+        }
 	}
 	private class ObjFace extends ArrayList<ObjVertex> {
 		private static final long serialVersionUID = -4130668677651098160L;
@@ -94,16 +112,21 @@ class ObjReader {
 			int textureIndex = objIndex(subtokens, 1, 0);
 			int normalIndex  = objIndex(subtokens, 2, objNormals.size());
 
-			// TODO: fill in action to take here.
+			ObjVertex vertex = new ObjVertex(vertexIndex, textureIndex, normalIndex);
+			face.add(vertex);
 		}
-		// TODO: fill in action to take here.
+		objFaces.add(face);
 	}
 
 	private int objIndex(String[] subtokens, int tokenIndex, int baseForNegativeIndices) {
-		// TODO: write this.  subtokens[tokenIndex], if it exists, holds a string for an index.
-		// use Integer.parseInt() to get the integer value of the index.
-		// Be sure to handle both positive and negative indices.
-        return 0;
+        int result;
+        int index = Integer.parseInt(subtokens[tokenIndex]);
+        if(index < 0 ) {
+            result = baseForNegativeIndices + index;
+        } else {
+            result = index;
+        }
+        return result;
 	}
 
 	private void interpretObjNormal(String[] tokens) {
@@ -112,14 +135,14 @@ class ObjReader {
 			throw new BadObjFileException("vertex normal with wrong number of arguments : " + numArgs + ": " + tokens);				
 		}
 		Point3DH normal = SimpInterpreter.interpretPoint(tokens, 1);
-		// TODO: fill in action to take here.
+		objNormals.add(normal);
 	}
 	private void interpretObjVertex(String[] tokens) {
 		int numArgs = tokens.length - 1;
 		Point3DH point = objVertexPoint(tokens, numArgs);
 		Color color = objVertexColor(tokens, numArgs);
-		
-		// TODO: fill in action to take here.
+		Vertex3D v = new Vertex3D(point, color);
+		objVertices.add(v);
 	}
 
 	private Color objVertexColor(String[] tokens, int numArgs) {
