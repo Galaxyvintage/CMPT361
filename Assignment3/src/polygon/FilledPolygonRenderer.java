@@ -19,20 +19,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
     // TODO: Need to optimize and clean up
     public void drawPolygon(Polygon polygon, Drawable drawable, Shader vertexShader) {
 
-        ArrayList<Polygon> polygons = new ArrayList<>();
-
-        if (polygon.length() > 3) {
-
-            Vertex3D anchor =polygon.get(0);
-            // TODO: Triangulate if polygon has more than 3 vertices
-            for(int i = 1; i < polygon.length(); i++) {
-                Vertex3D v1 = polygon.get(i);
-                Vertex3D v2 = polygon.get(i+1);
-                polygons.add(Polygon.make(anchor, v1, v2));
-            }
-        } else {
-            polygons.add(polygon);
-        }
+        ArrayList<Polygon> polygons = polygon.triangulate();
 
         for (int k = 0; k < polygons.size(); k++) {
             Polygon currentPolygon = polygons.get(k);
@@ -43,9 +30,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                 v = v.replacePoint(new Point3DH(v.getX(),
                                                 v.getY(),
                                                 1/Z));
-//                v = v.replaceColor(new Color(v.getColor().getR() / Z,
-//                                             v.getColor().getG() / Z,
-//                                             v.getColor().getB() / Z));
                 vertices.add(v);
             }
 
@@ -90,11 +74,13 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             Color c;
             c = vertexShader.shade(LTopVertex.getColor());
             LTopVertex = LTopVertex.replaceColor(c);
+
             c = vertexShader.shade(LBotVertex.getColor());
             LBotVertex = LBotVertex.replaceColor(c);
 
             c = vertexShader.shade(RTopVertex.getColor());
             RTopVertex = RTopVertex.replaceColor(c);
+
             c = vertexShader.shade(RBotVertex.getColor());
             RBotVertex = RBotVertex.replaceColor(c);
 

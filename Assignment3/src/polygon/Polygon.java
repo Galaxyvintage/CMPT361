@@ -164,4 +164,22 @@ public class Polygon extends Chain {
 	public String toString() {
 		return "Polygon[" + super.toString() + "]";
 	}
+
+	public ArrayList<Polygon> triangulate() {
+        ArrayList<Polygon> polygons = new ArrayList<>();
+
+        if (this.length() > 3) {
+            Vertex3D anchor =this.get(0);
+            // TODO: Triangulate if polygon has more than 3 vertices
+            for(int i = 1; i < this.length(); i++) {
+                Vertex3D v1 = this.get(i);
+                Vertex3D v2 = this.get(i+1);
+                polygons.add(Polygon.make(anchor, v1, v2));
+            }
+        } else {
+            polygons.add(this);
+        }
+
+        return polygons;
+    }
 }

@@ -25,14 +25,6 @@ public class SimpInterpreter {
 	private static final int VIEW_PLANE = -1; // d = -1;
 	private static final char COMMENT_CHAR = '#';
 
-	private RenderStyle renderStyle;
-	private RendererTrio renderers;
-
-	private Transformation CTM;
-	private Transformation worldToView;
-	private Transformation projectedToScreen;
-
-	private Stack<Transformation> transformationStack;
 
 	private static double WORLD_LOW_X = -100;
 	private static double WORLD_HIGH_X = 100;
@@ -41,6 +33,13 @@ public class SimpInterpreter {
 	private static double WORLD_NEAR_Z = 0;
 	private static double WORLD_FAR_Z = -200;
 
+
+    private Transformation CTM = Transformation.identity();
+    private Transformation worldToView = Transformation.identity();
+    private Transformation projectedToScreen = Transformation.identity();
+    private Stack<Transformation> transformationStack;
+    private RenderStyle renderStyle;
+    private RendererTrio renderers;
 
 	private LineBasedReader reader;
 	private Stack<LineBasedReader> readerStack;
@@ -63,33 +62,23 @@ public class SimpInterpreter {
 		this.defaultColor = Color.WHITE;
 
         transformationStack = new Stack<>();
-        CTM = Transformation.identity();
-        worldToView = Transformation.identity();
         makeProjectedToScreenTransform(drawable.getDimensions());
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
 	}
 
-	private void makeProjectedToScreenTransform(Dimensions dimensions) {
-        double scaleX;
-        double scaleY;
-        double transX;
-        double transY;
-        double transXToCenter = -1.0 * (WORLD_HIGH_X + WORLD_LOW_X) / 2.0;
-        double transYToCenter = -1.0 * (WORLD_HIGH_Y + WORLD_LOW_Y) / 2.0;
-        scaleX = dimensions.getWidth() / (WORLD_HIGH_X - WORLD_LOW_X);
-        scaleY = dimensions.getHeight() / (WORLD_HIGH_Y - WORLD_LOW_Y);
-        transX = dimensions.getWidth() / 2.0;
-        transY = dimensions.getHeight() / 2.0;
+	public Transformation getCTM() {
+	    return this.CTM;
+    }
 
-
-        projectedToScreen = Transformation.identity();
-        projectedToScreen.postMultiply(Transformation.translate(transX, transY, 0));
-        projectedToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
-        projectedToScreen.postMultiply(Transformation.translate(transXToCenter, transYToCenter, 0));
-        projectedToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
-	}
+    public Vertex3D projectToScreen(Vertex3D vertex) {
+        double z = vertex.getZ();
+        Vertex3D out = projectedToScreen.multiplyVertex(vertex);
+        out = out.euclidean();
+        out = out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
+        return out;
+    }
 
 	public void interpret() {
 		while(reader.hasNext() ) {
@@ -115,7 +104,27 @@ public class SimpInterpreter {
 		}
 	}
 
-	private void interpretCommand(String[] tokens) {
+    private void makeProjectedToScreenTransform(Dimensions dimensions) {
+        double scaleX;
+        double scaleY;
+        double transX;
+        double transY;
+        double transXToCenter = -1.0 * (WORLD_HIGH_X + WORLD_LOW_X) / 2.0;
+        double transYToCenter = -1.0 * (WORLD_HIGH_Y + WORLD_LOW_Y) / 2.0;
+        scaleX = dimensions.getWidth() / (WORLD_HIGH_X - WORLD_LOW_X);
+        scaleY = dimensions.getHeight() / (WORLD_HIGH_Y - WORLD_LOW_Y);
+        transX = dimensions.getWidth() / 2.0;
+        transY = dimensions.getHeight() / 2.0;
+
+
+        projectedToScreen = Transformation.identity();
+        projectedToScreen.postMultiply(Transformation.translate(transX, transY, 0));
+        projectedToScreen.postMultiply(Transformation.scale(scaleX, scaleY, 1));
+        projectedToScreen.postMultiply(Transformation.translate(transXToCenter, transYToCenter, 0));
+        projectedToScreen.postMultiply(Transformation.perspective(VIEW_PLANE));
+    }
+
+    private void interpretCommand(String[] tokens) {
 		switch(tokens[0]) {
 		case "{" :      push();   break;
 		case "}" :      pop();    break;
@@ -132,7 +141,7 @@ public class SimpInterpreter {
 		case "surface" :	interpretSurface(tokens);	break;
 		case "ambient" :	interpretAmbient(tokens);	break;
 		case "depth" :		interpretDepth(tokens);		break;
-//		case "obj" :		interpretObj(tokens);		break;
+		case "obj" :		interpretObj(tokens);		break;
 
 		default :
 			System.err.println("bad input line: " + tokens);
@@ -317,10 +326,18 @@ public class SimpInterpreter {
         drawable = new DepthCueingDrawable(drawable, near, far, new Color(r, g, b));
     }
 
+    private void interpretObj(String[] tokens) {
+        String quotedFilename = tokens[1];
+        int length = quotedFilename.length();
+        assert quotedFilename.charAt(0) == '"' && quotedFilename.charAt(length-1) == '"';
+        String filename = quotedFilename.substring(1, length-1);
+	    objFile("simp/" + filename + ".obj");
+    }
+
     private void objFile(String filename) {
         ObjReader objReader = new ObjReader(filename, defaultColor);
         objReader.read();
-        objReader.render();
+        objReader.render(this);
     }
 
     public static Point3DH interpretPoint(String[] tokens, int startingIndex) {
@@ -389,7 +406,7 @@ public class SimpInterpreter {
         }
 	}
 
-	private void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
+	public void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
  	    Polygon polygon = Polygon.make(p1, p2, p3);
 	    Polygon clipped = clipper.clipZ(polygon);
 
@@ -421,12 +438,5 @@ public class SimpInterpreter {
         }
 	}
 
-	private Vertex3D projectToScreen(Vertex3D vertex) {
-        double z = vertex.getZ();
-        Vertex3D out = projectedToScreen.multiplyVertex(vertex);
-        out = out.euclidean();
-        out = out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
-		return out;
 
-	}
 }

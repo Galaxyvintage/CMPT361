@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import geometry.Point3DH;
+import geometry.Vertex;
 import geometry.Vertex3D;
 import polygon.Polygon;
 import windowing.graphics.Color;
@@ -42,6 +43,7 @@ class ObjReader {
 	private List<Vertex3D> objVertices;
 	private List<Vertex3D> transformedVertices;
 	private List<Point3DH> objNormals;
+    private List<Point3DH> transformedNormals;
 	private List<ObjFace> objFaces;
 
 	private Color defaultColor;
@@ -51,21 +53,31 @@ class ObjReader {
 		this.objVertices = new ArrayList<>();
 		this.transformedVertices = new ArrayList<>();
 		this.objNormals = new ArrayList<>();
+		this.transformedNormals = new ArrayList<>();
 		this.objFaces = new ArrayList<>();
 		this.defaultColor = defaultColor;
 	}
 
-	public void render() {
-		// TODO: Implement.  All of the vertices, normals, and faces have been defined.
-		// First, transform all of the vertices.		
-		// Then, go through each face, break into triangles if necessary, and send each triangle to the renderer.
-		// You may need to add arguments to this function, and/or change the visibility of functions in SimpInterpreter.
+	public void render(SimpInterpreter interpreter) {
+        transformVertices(interpreter);
+        transformNormals(interpreter);
 
+        for(ObjFace face: objFaces) {
+            Polygon polygon = polygonForFace(face);
+            ArrayList<Polygon> polygons = polygon.triangulate();
+            for(Polygon p: polygons) {
+                interpreter.polygon(p.get(0), p.get(1), p.get(2));
+            }
+        }
 	}
 	
 	private Polygon polygonForFace(ObjFace face) {
-		// TODO: This function might be used in render() above.  Implement it if you find it handy.
-		return null;
+        Polygon result = Polygon.makeEmpty();
+        for(ObjVertex objVertex: face) {
+            Vertex3D vertex = transformedVertices.get(objVertex.getVertexIndex() - 1);
+            result.add(vertex);
+        }
+		return result;
 	}
 
 	public void read() {
@@ -164,4 +176,18 @@ class ObjReader {
 		}
 		throw new BadObjFileException("vertex with wrong number of arguments : " + numArgs + ": " + tokens);
 	}
+
+	private void transformVertices(SimpInterpreter interpreter) {
+	    for(Vertex3D vertex: objVertices) {
+	        Vertex3D v = interpreter.getCTM().multiplyVertex(vertex);
+	        transformedVertices.add(v);
+        }
+    }
+
+    private void transformNormals(SimpInterpreter interpreter) {
+        for(Point3DH point: objNormals) {
+            Point3DH p = interpreter.getCTM().multiplyPoint(point);
+            transformedNormals.add(p);
+        }
+    }
 }
