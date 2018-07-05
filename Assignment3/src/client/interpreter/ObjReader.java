@@ -29,7 +29,12 @@ class ObjReader {
 	private Color defaultColor;
 	
 	ObjReader(String filename, Color defaultColor) {
-		// TODO: Initialize an instance of this class.
+        this.reader = new LineBasedReader(filename);
+		this.objVertices = new ArrayList<>();
+		this.transformedVertices = new ArrayList<>();
+		this.objNormals = new ArrayList<>();
+		this.objFaces = new ArrayList<>();
+		this.defaultColor = defaultColor;
 	}
 
 	public void render() {
