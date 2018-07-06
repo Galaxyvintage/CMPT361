@@ -3,6 +3,8 @@ package client.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.RendererTrio;
+import com.sun.scenario.effect.impl.Renderer;
 import geometry.Point3DH;
 import geometry.Vertex;
 import geometry.Vertex3D;
@@ -62,11 +64,18 @@ class ObjReader {
         transformVertices(interpreter);
         transformNormals(interpreter);
 
+        SimpInterpreter.RenderStyle style = interpreter.getRenderStyle();
         for(ObjFace face: objFaces) {
             Polygon polygon = polygonForFace(face);
-            ArrayList<Polygon> polygons = polygon.triangulate();
+            ArrayList<Polygon> polygons = new ArrayList<>();
+            if(style == SimpInterpreter.RenderStyle.WIREFRAME) {
+                polygons.add(polygon);
+            } else {
+                polygons = polygon.triangulate();
+            }
+
             for(Polygon p: polygons) {
-                interpreter.polygon(p.get(0), p.get(1), p.get(2));
+                interpreter.polygon(p);
             }
         }
 	}
@@ -132,6 +141,15 @@ class ObjReader {
 
 	private int objIndex(String[] subtokens, int tokenIndex, int baseForNegativeIndices) {
         int result;
+        if(subtokens.length <= tokenIndex) {
+            return 0;
+        }
+
+        String token = subtokens[tokenIndex];
+        if(token.isEmpty()) {
+        	return 0;
+		}
+
         int index = Integer.parseInt(subtokens[tokenIndex]);
         if(index < 0 ) {
             result = baseForNegativeIndices + index;

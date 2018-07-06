@@ -1,0 +1,17 @@
+{
+	ambient 1 1 1
+	{
+		camera  -1 -1 1 1 -0.1 -300
+		depth 0 -200 (0 0 0)
+	}
+
+	wire
+	{
+	    translate  0 0 -6
+	    rotate X 35
+	    rotate Y 55
+	    scale 1.5 1.5 1.5
+		obj "Avent"
+	}
+
+}

@@ -1,0 +1,19 @@
+{
+	ambient 1 1 1
+	{
+		translate 0 10 50
+		camera  -1 -1 1 1 -0.1 -300
+		depth 0 -200 (0 0 0)
+	}
+
+	wire
+	{
+	    rotate X 20
+	    rotate Y 70
+	    translate 0 -5 0
+		obj "2b"
+	}
+
+
+
+}

@@ -97,19 +97,22 @@ public class Clipper {
     }
 
     public Polygon clipZ(Polygon polygon) {
-        Vertex3D v1;
-        Vertex3D v2;
-        Vertex3D v3;
-
-        v1 = polygon.get(0);
-        v2 = polygon.get(1);
-        v3 = polygon.get(2);
-
-        if ((v1.getZ() > nearZ && v2.getZ() > nearZ && v3.getZ() > nearZ) ||
-            (v1.getZ() < farZ && v2.getZ() < farZ && v3.getZ() < farZ)) {
-            return null;
+        boolean allLessThanFar = true;
+        boolean allGreaterThanNear = true;
+        for(int i = 0; i < polygon.length(); i++) {
+            Vertex3D v = polygon.get(i);
+            if(i == 0) {
+                allLessThanFar = (v.getZ() < farZ);
+                allGreaterThanNear = (v.getZ() > nearZ);
+            } else {
+                allLessThanFar = allLessThanFar && (v.getZ() < farZ);
+                allGreaterThanNear = allGreaterThanNear && (v.getZ() > nearZ);
+            }
         }
 
+        if(allLessThanFar || allGreaterThanNear) {
+            return null;
+        }
         Polygon p = polygon;
         p = clipZHelper(p, nearZ);
         p = clipZHelper(p, farZ);

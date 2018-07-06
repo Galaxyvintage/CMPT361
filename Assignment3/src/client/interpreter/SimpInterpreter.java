@@ -72,6 +72,10 @@ public class SimpInterpreter {
 	    return this.CTM;
     }
 
+    public RenderStyle getRenderStyle() {
+	    return this.renderStyle;
+    }
+
     public Vertex3D projectToScreen(Vertex3D vertex) {
         double z = vertex.getZ();
         Vertex3D out = projectedToScreen.multiplyVertex(vertex);
@@ -437,6 +441,37 @@ public class SimpInterpreter {
             }
         }
 	}
+
+    public void polygon(Polygon polygon) {
+        Polygon clipped = clipper.clipZ(polygon);
+
+        if(clipped != null) {
+            ArrayList<Vertex3D> vertices = new ArrayList<>();
+            // transform clipped vertices
+            for (int i = 0; i < clipped.length(); i++) {
+                Vertex3D v = projectToScreen(clipped.get(i));
+                vertices.add(v);
+            }
+
+            polygon = Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
+            clipped = clipper.clipX(polygon);
+            if(clipped != null) {
+                clipped = clipper.clipY(clipped);
+            }
+
+            if(clipped != null) {
+                PolygonRenderer renderer;
+                if (renderStyle == RenderStyle.FILLED) {
+                    renderer = renderers.getFilledRenderer();
+                    Shader ambientShader = c -> ambientLight.multiply(c);
+                    renderer.drawPolygon(clipped, drawable, ambientShader);
+                } else {
+                    renderer = renderers.getWireframeRenderer();
+                    renderer.drawPolygon(clipped, drawable);
+                }
+            }
+        }
+    }
 
 
 }

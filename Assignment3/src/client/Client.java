@@ -14,7 +14,7 @@ import windowing.graphics.Dimensions;
 
 public class Client implements PageTurner {
 	private static final int ARGB_WHITE = 0xff_ff_ff_ff;
-	private static final int NUM_PAGES = 10;
+	private static final int NUM_PAGES = 13;
 	private static final Dimensions PANEL_SIZE = new Dimensions(650, 650);
 
 	private boolean hasArgument = false;
@@ -91,7 +91,11 @@ public class Client implements PageTurner {
 			case 7:  filename = "pageG";	 break;
 			case 8:  filename = "pageH";	 break;
 			case 9:  filename = "pageI";	 break;
-			case 0:  filename = "tomsPageJ";	 break;
+			case 10: filename = "pageJ";	 break;
+			case 11: filename = "pageK";	 break;
+//			case 12: filename = "pageL";	 break;
+			case 12: filename = "pageM";	 break;
+			case 0:  filename = "pageN";	 break;
 
 			default: defaultPage();
 				return;
