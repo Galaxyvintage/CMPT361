@@ -13,8 +13,8 @@ public class DDALineRenderer implements LineRenderer {
     @Override
     public void drawLine(Vertex3D p1, Vertex3D p2, Drawable drawable) {
 
-        double x = p1.getX();
-        double y = p1.getY();
+        double x = p1.getIntX();
+        double y = p1.getIntY();
         double z = 1/p1.getZ();
 
         double r = p1.getColor().getR()/ p1.getZ();
@@ -27,8 +27,8 @@ public class DDALineRenderer implements LineRenderer {
         drawable.setPixelWithCoverage(x_round, y_round, 1/z, argbColor, COVERAGE);
 
         // coordinate
-        double deltaX = p2.getX() - p1.getX();
-        double deltaY = p2.getY() - p1.getY();
+        double deltaX = p2.getIntX() - p1.getIntX();
+        double deltaY = p2.getIntY() - p1.getIntY();
         double deltaZ = 1/p2.getZ() - 1/p1.getZ();
 
         // color

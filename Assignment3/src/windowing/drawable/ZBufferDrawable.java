@@ -15,7 +15,7 @@ public class ZBufferDrawable extends DrawableDecorator {
 
     @Override
     public void setPixel(int x, int y, double z, int argbColor) {
-        if (z > zBuffer[x][y]) {
+        if (z >= zBuffer[x][y]) {
             zBuffer[x][y] = z;
             delegate.setPixel(x, y, z, argbColor);
         }
