@@ -1,0 +1,22 @@
+{
+	ambient 0.75 1 0.75
+	{
+		camera  -1 -1 1 1 -0.1 -300
+		depth 0 -200 (0 0 0)
+	}
+
+	wire
+	{
+	    translate -20 -30 -70
+	    scale 0.3 0.3 0.3
+		obj "can1"
+	}
+
+
+	{
+	    translate 20 -30 -70
+	    scale 0.3 0.3 0.3
+		obj "can2"
+	}
+
+}

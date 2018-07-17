@@ -1,0 +1,17 @@
+{
+	ambient 0.75 1 0.75
+	{
+	    rotate Y 30
+		camera  -1 -1 1 1 -0.1 -300
+		depth 0 -200 (0 0 0)
+	}
+
+	wire
+	{
+	    translate 0 0 -80
+	    scale 0.3 0.3 0.3
+		obj "Room"
+	}
+
+
+}
