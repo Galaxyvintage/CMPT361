@@ -3,7 +3,9 @@ package geometry;
 import windowing.graphics.Color;
 
 public class Vertex3D implements Vertex {
+
 	protected Point3DH point;
+	protected Point3DH pointInWorld;
 	protected Color color;
 	
 	public Vertex3D(Point3DH point, Color color) {
@@ -11,6 +13,14 @@ public class Vertex3D implements Vertex {
 		this.point = point;
 		this.color = color;
 	}
+
+	public Vertex3D(Point3DH point, Point3DH pointInWorld, Color color) {
+		super();
+		this.point = point;
+		this.pointInWorld = pointInWorld;
+		this.color = color;
+	}
+
 	public Vertex3D(double x, double y, double z, Color color) {
 		this(new Point3DH(x, y, z), color);
 	}
@@ -85,7 +95,7 @@ public class Vertex3D implements Vertex {
 		return "(" + getIntX() + ", " + getIntY() + getIntZ() + ", " + ", " + getColor().toIntString() + ")";
 	}
 
-	// TODO: Double check if it works in homoegeneous space......
+	// TODO: Double check if it works in homogeneous space......
 	public Vertex3D normalize() {
 		double x = point.getX();
 		double y = point.getY();
