@@ -9,6 +9,7 @@ import client.RendererTrio;
 import geometry.*;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
+import shader.Lighting;
 import shader.Shader;
 import windowing.drawable.DepthCueingDrawable;
 import windowing.drawable.Drawable;
@@ -33,11 +34,15 @@ public class SimpInterpreter {
 	private static double WORLD_NEAR_Z = 0;
 	private static double WORLD_FAR_Z = -200;
 
+	private double kSpecular = 0.3;
+	private double kExponent = 0.8;
+
 
     private Transformation CTM = Transformation.identity();
     private Transformation worldToView = Transformation.identity();
     private Transformation projectedToScreen = Transformation.identity();
     private Stack<Transformation> transformationStack;
+    private ArrayList<Lighting> lightSources = new ArrayList<>();
     private RenderStyle renderStyle;
     private RendererTrio renderers;
 
@@ -146,6 +151,10 @@ public class SimpInterpreter {
 		case "ambient" :	interpretAmbient(tokens);	break;
 		case "depth" :		interpretDepth(tokens);		break;
 		case "obj" :		interpretObj(tokens);		break;
+		case "light" : interpretLight(tokens);
+		case "phong": break;
+		case "gouraud": break;
+		case "flat": break;
 
 		default :
 			System.err.println("bad input line: " + tokens);
@@ -311,7 +320,12 @@ public class SimpInterpreter {
         double r = cleanNumber(tokens[1]);
         double g = cleanNumber(tokens[2]);
         double b = cleanNumber(tokens[3]);
+        double ks = cleanNumber(tokens[4]);
+        double kp = cleanNumber(tokens[5]);
+
         defaultColor = new Color(r, g, b);
+        kSpecular = ks;
+        kExponent = kp;
     }
 
     private void interpretAmbient(String[] tokens) {
@@ -336,6 +350,16 @@ public class SimpInterpreter {
         assert quotedFilename.charAt(0) == '"' && quotedFilename.charAt(length-1) == '"';
         String filename = quotedFilename.substring(1, length-1);
 	    objFile("simp/" + filename + ".obj");
+    }
+
+    private void interpretLight(String[] tokens) {
+        double r = cleanNumber(tokens[1]);
+        double g = cleanNumber(tokens[2]);
+        double b = cleanNumber(tokens[3]);
+        double A = cleanNumber(tokens[4]);
+        double B = cleanNumber(tokens[5]);
+        Lighting light = new Lighting(r, g, b, A, B, ambientLight, CTM.adjoint());
+        lightSources.add(light);
     }
 
     private void objFile(String filename) {

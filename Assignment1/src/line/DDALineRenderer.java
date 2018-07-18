@@ -10,11 +10,11 @@ public class  DDALineRenderer implements LineRenderer {
 
     @Override
     public void drawLine(Vertex3D p1, Vertex3D p2, Drawable drawable) {
-        double deltaX = p2.getX() - p1.getX();
-        double deltaY = p2.getY() - p1.getY();
+        double deltaX = p2.getIntX() - p1.getIntX();
+        double deltaY = p2.getIntY() - p1.getIntY();
 
-        double x = p1.getX();
-        double y = p1.getY();
+        double x = p1.getIntX();
+        double y = p1.getIntY();
 
         int x_round = (int)Math.round(x);
         int y_round = (int)Math.round(y);
