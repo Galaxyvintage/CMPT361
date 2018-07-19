@@ -2,13 +2,9 @@ package client;
 
 
 import client.interpreter.SimpInterpreter;
-import client.testPages.*;
 import geometry.Point2D;
-import model.Cylinder;
-import model.Icosahedron;
 import windowing.PageTurner;
 import windowing.drawable.*;
-import windowing.graphics.Color;
 import windowing.graphics.Dimensions;
 
 
@@ -24,7 +20,6 @@ public class Client implements PageTurner {
 	
 	private Drawable image;
 	private Drawable fullPanel;
-	private Drawable depthCueingDrawable;
 
 	private RendererTrio renderers;
 	private SimpInterpreter interpreter;

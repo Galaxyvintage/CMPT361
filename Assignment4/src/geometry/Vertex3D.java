@@ -5,20 +5,25 @@ import windowing.graphics.Color;
 public class Vertex3D implements Vertex {
 
 	protected Point3DH point;
-	protected Point3DH pointInWorld;
+	protected Point3DH cameraPoint;
 	protected Color color;
+	private boolean hasNormal = false;
+	protected Plane3DH normal;
 	
 	public Vertex3D(Point3DH point, Color color) {
 		super();
 		this.point = point;
+		this.cameraPoint = point;
 		this.color = color;
 	}
 
-	public Vertex3D(Point3DH point, Point3DH pointInWorld, Color color) {
+	public Vertex3D(Point3DH point, Point3DH cameraPoint, Color color) {
 		super();
 		this.point = point;
-		this.pointInWorld = pointInWorld;
+		this.cameraPoint = cameraPoint;
 		this.color = color;
+//		this.normal = normal;
+//		hasNormal = true;
 	}
 
 	public Vertex3D(double x, double y, double z, Color color) {
@@ -27,6 +32,7 @@ public class Vertex3D implements Vertex {
 
 	public Vertex3D() {
 	}
+
 	public double getX() {
 		return point.getX();
 	}
@@ -45,6 +51,7 @@ public class Vertex3D implements Vertex {
 	public Point3DH getPoint3D() {
 		return point;
 	}
+	public Point3DH getCameraPoint() {return cameraPoint;}
 	
 	public int getIntX() {
 		return (int) Math.round(getX());
@@ -59,6 +66,9 @@ public class Vertex3D implements Vertex {
 	public Color getColor() {
 		return color;
 	}
+	public boolean hasNormal() {
+	    return hasNormal;
+    }
 	
 	public Vertex3D rounded() {
 		return new Vertex3D(point.round(), color);
@@ -83,6 +93,11 @@ public class Vertex3D implements Vertex {
 	public Vertex3D replaceColor(Color newColor) {
 		return new Vertex3D(point, newColor);
 	}
+
+	public Vertex3D replaceCameraPoint(Point3DH cameraPoint) {
+	    return new Vertex3D(point, cameraPoint, color);
+    }
+
 	public Vertex3D euclidean() {
 		Point3DH euclidean = getPoint3D().euclidean();
 		return replacePoint(euclidean);

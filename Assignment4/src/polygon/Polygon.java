@@ -2,6 +2,7 @@ package polygon;
 
 import geometry.Vertex;
 import geometry.Vertex3D;
+import windowing.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,10 @@ import java.util.List;
 public class Polygon extends Chain {
 	private static final int INDEX_STEP_FOR_CLOCKWISE = -1;
 	private static final int INDEX_STEP_FOR_COUNTERCLOCKWISE = 1;
-	
+    public double kSpecular;
+    public double specularExponent;
+	public Color faceColor;
+
 	private Polygon(Vertex3D... initialVertices) {
 		super(initialVertices);
 		if(length() < 3) {

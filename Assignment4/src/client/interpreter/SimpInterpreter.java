@@ -9,8 +9,7 @@ import client.RendererTrio;
 import geometry.*;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
-import shading.Lighting;
-import shading.Shader;
+import shading.*;
 import windowing.drawable.DepthCueingDrawable;
 import windowing.drawable.Drawable;
 import windowing.drawable.TranslatingDrawable;
@@ -19,7 +18,8 @@ import windowing.graphics.Dimensions;
 
 
 public class SimpInterpreter {
-	private static final int NUM_TOKENS_FOR_POINT = 3;
+
+    private static final int NUM_TOKENS_FOR_POINT = 3;
 	private static final int NUM_TOKENS_FOR_COMMAND = 1;
 	private static final int NUM_TOKENS_FOR_COLORED_VERTEX = 6;
 	private static final int NUM_TOKENS_FOR_UNCOLORED_VERTEX = 3;
@@ -36,7 +36,7 @@ public class SimpInterpreter {
 
 	private double kSpecular = 0.3;
 	private double kExponent = 0.8;
-
+    private ShaderStyle shaderStyle;
 
     private Transformation CTM = Transformation.identity();
     private Transformation worldToView = Transformation.identity();
@@ -55,10 +55,22 @@ public class SimpInterpreter {
 	private Drawable drawable;
 	private Clipper clipper;
 
+    private Shader ambientShader;
+    private FaceShader faceShader;
+    private VertexShader vertexShader;
+    private PixelShader pixelShader;
+
 	public enum RenderStyle {
 		FILLED,
 		WIREFRAME;
 	}
+
+    public enum
+    ShaderStyle {
+        FLAT,
+        GOURAUD,
+        PHONG;
+    };
 	public SimpInterpreter(String filename,
 			Drawable drawable,
 			RendererTrio renderers) {
@@ -71,6 +83,9 @@ public class SimpInterpreter {
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
+		shaderStyle = ShaderStyle.FLAT;
+		ambientShader = c  -> ambientLight.multiply(c);
+		faceShader = polygon -> polygon;
 	}
 
 	public Transformation getCTM() {
@@ -83,9 +98,11 @@ public class SimpInterpreter {
 
     public Vertex3D projectToScreen(Vertex3D vertex) {
         double z = vertex.getZ();
+        Point3DH cameraPoint = vertex.getCameraPoint();
         Vertex3D out = projectedToScreen.multiplyVertex(vertex);
         out = out.euclidean();
         out = out.replacePoint(new Point3DH(out.getX(), out.getY(), z));
+        out = out.replaceCameraPoint(cameraPoint);
         return out;
     }
 
@@ -135,10 +152,13 @@ public class SimpInterpreter {
 
     private void interpretCommand(String[] tokens) {
 		switch(tokens[0]) {
-		case "{" :      push();   break;
-		case "}" :      pop();    break;
-		case "wire" :   wire();   break;
-		case "filled" : filled(); break;
+		case "{" :      push();    break;
+		case "}" :      pop();     break;
+		case "wire" :   wire();    break;
+		case "filled" : filled();  break;
+//		case "phong":   phong();   break;
+//		case "gouraud": gouraud(); break;
+		case "flat":    flat();    break;
 
 		case "file" :		interpretFile(tokens);		break;
 		case "scale" :		interpretScale(tokens);		break;
@@ -152,9 +172,7 @@ public class SimpInterpreter {
 		case "depth" :		interpretDepth(tokens);		break;
 		case "obj" :		interpretObj(tokens);		break;
 		case "light" : interpretLight(tokens);
-		case "phong": break;
-		case "gouraud": break;
-		case "flat": break;
+
 
 		default :
 			System.err.println("bad input line: " + tokens);
@@ -183,6 +201,32 @@ public class SimpInterpreter {
 
 	private void filled() {
         renderStyle = RenderStyle.FILLED;
+	}
+
+	private void flat() {
+	    shaderStyle = ShaderStyle.FLAT;
+	    faceShader = polygon -> {
+	        Vertex3D v1= polygon.get(0);
+            Vertex3D v2= polygon.get(1);
+            Vertex3D v3= polygon.get(2);
+
+            Point3DH point1 = v1.getCameraPoint().euclidean();
+            Point3DH point2 = v2.getCameraPoint().euclidean();
+	        Point3DH point3 = v3.getCameraPoint().euclidean();
+	        Point3DH center = point1.add(point2).add(point3).scale(1.0/3.0);
+
+	        // TODO : face normal
+            if(v1.hasNormal() && v2.hasNormal() && v3.hasNormal()) {
+                
+
+            } else {
+
+            }
+
+	        return polygon;
+        };
+
+
 	}
 
 	// this one is complete.
@@ -358,7 +402,8 @@ public class SimpInterpreter {
         double b = cleanNumber(tokens[3]);
         double A = cleanNumber(tokens[4]);
         double B = cleanNumber(tokens[5]);
-        Lighting light = new Lighting(r, g, b, A, B, ambientLight, CTM.adjoint());
+        Color color = new Color(r, g, b);
+        Lighting light = new Lighting(color, A, B, ambientLight, CTM.multiplyPoint(new Point3DH(0, 0, 0)));
         lightSources.add(light);
     }
 
@@ -456,8 +501,7 @@ public class SimpInterpreter {
                 PolygonRenderer renderer;
                 if (renderStyle == RenderStyle.FILLED) {
                     renderer = renderers.getFilledRenderer();
-                    Shader ambientShader = c -> ambientLight.multiply(c);
-                    renderer.drawPolygon(clipped, drawable, ambientShader);
+                    renderer.drawPolygon(clipped, drawable, faceShader, ambientShader);
                 } else {
                     renderer = renderers.getWireframeRenderer();
                     renderer.drawPolygon(clipped, drawable);
@@ -487,8 +531,7 @@ public class SimpInterpreter {
                 PolygonRenderer renderer;
                 if (renderStyle == RenderStyle.FILLED) {
                     renderer = renderers.getFilledRenderer();
-                    Shader ambientShader = c -> ambientLight.multiply(c);
-                    renderer.drawPolygon(clipped, drawable, ambientShader);
+                    renderer.drawPolygon(clipped, drawable, faceShader, ambientShader);
                 } else {
                     renderer = renderers.getWireframeRenderer();
                     renderer.drawPolygon(clipped, drawable);

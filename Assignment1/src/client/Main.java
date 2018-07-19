@@ -22,7 +22,7 @@ public class Main extends Application {
 		Window361 window = new Window361(primaryStage);
 		Drawable drawable = window.getDrawable();
 		
-		Client client = new Client(drawable);
+		client.Client client = new client.Client(drawable);
 		window.setPageTurner(client);
 		client.nextPage();
 		
