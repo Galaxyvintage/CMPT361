@@ -35,7 +35,7 @@ public class SimpInterpreter {
 	private static double WORLD_FAR_Z = -200;
 
 	private double kSpecular = 0.3;
-	private double kExponent = 0.8;
+	private double exponentSpecular = 0.8;
     private ShaderStyle shaderStyle;
 
     private Transformation CTM = Transformation.identity();
@@ -213,20 +213,33 @@ public class SimpInterpreter {
             Point3DH point1 = v1.getCameraPoint().euclidean();
             Point3DH point2 = v2.getCameraPoint().euclidean();
 	        Point3DH point3 = v3.getCameraPoint().euclidean();
-	        Point3DH center = point1.add(point2).add(point3).scale(1.0/3.0);
+	        Vertex3D center = new Vertex3D(point1.add(point2).add(point3).scale(1.0/3.0), Color.WHITE);
+	        Point3DH normal;
 
 	        // TODO : face normal
             if(v1.hasNormal() && v2.hasNormal() && v3.hasNormal()) {
-                
-
+                Point3DH n1 = v1.getNormal();
+                Point3DH n2 = v2.getNormal();
+                Point3DH n3 = v3.getNormal();
+                Vertex3D n = new Vertex3D(n1.add(n2).add(n3).scale(1.0/3.0), Color.WHITE);
+                normal = n.normalize().getPoint3D();
             } else {
-
+                Vertex3D a = v2.subtract(v1);
+                Vertex3D b = v3.subtract(v1);
+                Vertex3D n= a.cross(b);
+                n = n.normalize();
+                normal = n.normalize().getPoint3D();
             }
+            center.setNormal(normal);
 
+            Color faceColor = ambientLight.multiply(defaultColor);
+            for(int i = 0; i < lightSources.size(); i++) {
+                Lighting lighting = lightSources.get(i);
+                faceColor = faceColor.add(lighting.light(center, defaultColor, kSpecular, exponentSpecular));
+            }
+            polygon.faceColor = faceColor;
 	        return polygon;
         };
-
-
 	}
 
 	// this one is complete.
@@ -369,7 +382,7 @@ public class SimpInterpreter {
 
         defaultColor = new Color(r, g, b);
         kSpecular = ks;
-        kExponent = kp;
+        exponentSpecular = kp;
     }
 
     private void interpretAmbient(String[] tokens) {
@@ -403,8 +416,8 @@ public class SimpInterpreter {
         double A = cleanNumber(tokens[4]);
         double B = cleanNumber(tokens[5]);
         Color color = new Color(r, g, b);
-        Lighting light = new Lighting(color, A, B, ambientLight, CTM.multiplyPoint(new Point3DH(0, 0, 0)));
-        lightSources.add(light);
+        Lighting lighting = new Lighting(color, A, B, ambientLight, CTM.multiplyPoint(new Point3DH(0, 0, 0)));
+        lightSources.add(lighting);
     }
 
     private void objFile(String filename) {

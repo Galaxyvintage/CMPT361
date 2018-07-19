@@ -8,7 +8,7 @@ public class Vertex3D implements Vertex {
 	protected Point3DH cameraPoint;
 	protected Color color;
 	private boolean hasNormal = false;
-	protected Plane3DH normal;
+	protected Point3DH normal;
 	
 	public Vertex3D(Point3DH point, Color color) {
 		super();
@@ -22,8 +22,6 @@ public class Vertex3D implements Vertex {
 		this.point = point;
 		this.cameraPoint = cameraPoint;
 		this.color = color;
-//		this.normal = normal;
-//		hasNormal = true;
 	}
 
 	public Vertex3D(double x, double y, double z, Color color) {
@@ -66,10 +64,7 @@ public class Vertex3D implements Vertex {
 	public Color getColor() {
 		return color;
 	}
-	public boolean hasNormal() {
-	    return hasNormal;
-    }
-	
+
 	public Vertex3D rounded() {
 		return new Vertex3D(point.round(), color);
 	}
@@ -87,6 +82,24 @@ public class Vertex3D implements Vertex {
 		return new Vertex3D(point.scale(scalar),
 				            color.scale(scalar));
 	}
+	public Vertex3D cross(Vertex3D other) {
+	    double x = point.getY() * other.getZ() - point.getZ() * other.getY();
+	    double y = point.getZ() * other.getX() - point.getX() * other.getZ();
+	    double z = point.getX() * other.getY() - point.getY() * other.getX();
+	    return new Vertex3D(new Point3DH(x, y, z), color);
+    }
+    public boolean hasNormal() {
+        return hasNormal;
+    }
+    public void setNormal(Point3DH normal) {
+		this.normal = normal;
+		hasNormal = true;
+	}
+
+	public Point3DH getNormal() {
+	    return normal;
+    }
+
 	public Vertex3D replacePoint(Point3DH newPoint) {
 		return new Vertex3D(newPoint, color);
 	}
@@ -110,7 +123,6 @@ public class Vertex3D implements Vertex {
 		return "(" + getIntX() + ", " + getIntY() + getIntZ() + ", " + ", " + getColor().toIntString() + ")";
 	}
 
-	// TODO: Double check if it works in homogeneous space......
 	public Vertex3D normalize() {
 		double x = point.getX();
 		double y = point.getY();

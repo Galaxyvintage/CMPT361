@@ -66,6 +66,16 @@ public class Point3DH implements Point {
 		double newZ = z * scalar;
 		return new Point3DH(newX, newY, newZ);
 	}
+	public double  distance(Point3DH other) {
+		double dx = x - other.getX();
+		double dy = x - other.getY();
+		double dz = x - other.getZ();
+		return Math.sqrt(dx*dx + dy*dy + dz*dz);
+	}
+    public Point3DH normalize() {
+        double length = Math.sqrt((x/w)*(x/w) + (y/w)*(y/w) + (z/w)*(z/w));
+        return new Point3DH(x/length, y/length, z/length);
+    }
 	public String toString() {
 		return "[" + x + " " + y + " " + z + " " + w + "]t";
 	}

@@ -22,7 +22,15 @@ public class Lighting {
         this.cameraSpaceLocation = cameraSpaceLocation;
     }
 
-    public Color Light(Vertex3D cameraSpacePoint, Color kDiffuse, double kSpecular, double specularExponent) {
+    public Color light(Vertex3D cameraSpacePoint, Color kDiffuse, double kSpecular, double specularExponent) {
+
+        double fatti =  1 /  (A + B * cameraSpaceLocation.distance(cameraSpacePoint.getPoint3D()));
+        Point3DH L = cameraSpaceLocation.normalize();
+        Point3DH N = cameraSpacePoint.normalize().getPoint3D();
+
+
+        //        intensity.multiply(fatti).multiply()
+
         return null;
     }
 }
