@@ -25,14 +25,12 @@ public class SimpInterpreter {
 	private static final int VIEW_PLANE = -1; // d = -1;
 	private static final char COMMENT_CHAR = '#';
 
-
 	private static double WORLD_LOW_X = -100;
 	private static double WORLD_HIGH_X = 100;
 	private static double WORLD_LOW_Y = -100;
 	private static double WORLD_HIGH_Y = 100;
 	private static double WORLD_NEAR_Z = 0;
 	private static double WORLD_FAR_Z = -200;
-
 
     private Transformation CTM = Transformation.identity();
     private Transformation worldToView = Transformation.identity();
@@ -54,6 +52,7 @@ public class SimpInterpreter {
 		FILLED,
 		WIREFRAME;
 	}
+
 	public SimpInterpreter(String filename,
 			Drawable drawable,
 			RendererTrio renderers) {
@@ -472,6 +471,4 @@ public class SimpInterpreter {
             }
         }
     }
-
-
 }
