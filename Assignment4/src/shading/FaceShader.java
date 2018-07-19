@@ -1,4 +1,4 @@
-package shader;
+package shading;
 
 import polygon.Polygon;
 

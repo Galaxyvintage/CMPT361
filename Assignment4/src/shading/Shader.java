@@ -1,4 +1,4 @@
-package shader;
+package shading;
 
 import windowing.graphics.Color;
 

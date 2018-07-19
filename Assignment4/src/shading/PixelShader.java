@@ -1,4 +1,4 @@
-package shader;
+package shading;
 
 import geometry.Vertex3D;
 import polygon.Polygon;

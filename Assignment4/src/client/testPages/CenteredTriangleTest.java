@@ -6,7 +6,7 @@ import geometry.Transformation;
 import geometry.Vertex3D;
 import polygon.Polygon;
 import polygon.PolygonRenderer;
-import shader.Shader;
+import shading.Shader;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
 

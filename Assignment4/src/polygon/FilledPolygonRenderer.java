@@ -4,7 +4,7 @@ import geometry.Point3DH;
 import geometry.Vertex3D;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
-import shader.Shader;
+import shading.Shader;
 
 import java.util.ArrayList;
 

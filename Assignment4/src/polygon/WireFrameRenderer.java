@@ -4,7 +4,7 @@ package polygon;
 import geometry.Vertex3D;
 import line.LineRenderer;
 import windowing.drawable.Drawable;
-import shader.Shader;
+import shading.Shader;
 
 
 public class WireFrameRenderer implements PolygonRenderer {
