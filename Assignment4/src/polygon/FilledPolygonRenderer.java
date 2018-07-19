@@ -73,7 +73,7 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                 MidVertex = LTopVertex;
             }
 
-            // Shading vertex color
+//            //Shading vertex color
 //            Color c;
 //            c = vertexShader.shade(LTopVertex.getColor());
 //            LTopVertex = LTopVertex.replaceColor(c);

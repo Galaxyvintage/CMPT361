@@ -511,6 +511,11 @@ public class Clipper {
                     break;
             }
         }
-        return Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
+
+        if (vertices.size() > 0) {
+            return Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
+        } else {
+            return null;
+        }
     }
 }

@@ -103,14 +103,14 @@ public class Vertex3D implements Vertex {
     }
 
 	public Vertex3D replacePoint(Point3DH newPoint) {
-		return new Vertex3D(newPoint, color);
+		return new Vertex3D(newPoint, cameraPoint, color);
 	}
 	public Vertex3D replaceColor(Color newColor) {
-		return new Vertex3D(point, newColor);
+		return new Vertex3D(point, cameraPoint, newColor);
 	}
 
-	public Vertex3D replaceCameraPoint(Point3DH cameraPoint) {
-	    return new Vertex3D(point, cameraPoint, color);
+	public Vertex3D replaceCameraPoint(Point3DH newCameraPoint) {
+	    return new Vertex3D(point, newCameraPoint, color);
     }
 
 	public Vertex3D euclidean() {
@@ -126,6 +126,6 @@ public class Vertex3D implements Vertex {
 	}
 
 	public Vertex3D normalize() {
-		return new Vertex3D(point.normalize(),  color);
+		return new Vertex3D(point.normalize(), color);
 	}
 }

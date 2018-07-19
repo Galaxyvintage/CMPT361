@@ -35,7 +35,7 @@ public class SimpInterpreter {
 	private static double WORLD_FAR_Z = -200;
 
 	private double kSpecular = 0.3;
-	private double exponentSpecular = 0.8;
+	private double specularExponent = 8;
     private ShaderStyle shaderStyle;
 
     private Transformation CTM = Transformation.identity();
@@ -223,18 +223,17 @@ public class SimpInterpreter {
                 Vertex3D n = new Vertex3D(n1.add(n2).add(n3).scale(1.0/3.0), Color.WHITE);
                 normal = n.normalize().getPoint3D();
             } else {
-                Vertex3D a = v2.subtract(v1);
-                Vertex3D b = v3.subtract(v1);
-                Vertex3D n= a.cross(b);
-                n = n.normalize();
-                normal = n.normalize().getPoint3D();
+                Point3DH a = point2.subtract(point1);
+                Point3DH b = point3.subtract(point1);
+                Point3DH n = a.cross(b);
+                normal = n.normalize();
             }
             center.setNormal(normal);
 
             Color faceColor = ambientLight.multiply(defaultColor);
             for(int i = 0; i < lightSources.size(); i++) {
                 Lighting lighting = lightSources.get(i);
-                faceColor = faceColor.add(lighting.light(center, defaultColor, kSpecular, exponentSpecular));
+                faceColor = faceColor.add(lighting.light(center, defaultColor, kSpecular, specularExponent));
             }
 
             ArrayList<Vertex3D> vertices = new ArrayList<>();
@@ -387,7 +386,7 @@ public class SimpInterpreter {
 
         defaultColor = new Color(r, g, b);
         kSpecular = ks;
-        exponentSpecular = kp;
+        specularExponent = kp;
     }
 
     private void interpretAmbient(String[] tokens) {
