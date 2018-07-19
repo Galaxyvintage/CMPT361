@@ -72,6 +72,9 @@ public class Point3DH implements Point {
 		double dz = x - other.getZ();
 		return Math.sqrt(dx*dx + dy*dy + dz*dz);
 	}
+	public double dot(Point3DH other) {
+	    return x*other.getX() + y*other.getY() + z*other.getZ();
+    }
     public Point3DH normalize() {
         double length = Math.sqrt((x/w)*(x/w) + (y/w)*(y/w) + (z/w)*(z/w));
         return new Point3DH(x/length, y/length, z/length);

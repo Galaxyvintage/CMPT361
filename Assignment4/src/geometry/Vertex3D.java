@@ -88,9 +88,11 @@ public class Vertex3D implements Vertex {
 	    double z = point.getX() * other.getY() - point.getY() * other.getX();
 	    return new Vertex3D(new Point3DH(x, y, z), color);
     }
+
     public boolean hasNormal() {
         return hasNormal;
     }
+
     public void setNormal(Point3DH normal) {
 		this.normal = normal;
 		hasNormal = true;
@@ -124,11 +126,6 @@ public class Vertex3D implements Vertex {
 	}
 
 	public Vertex3D normalize() {
-		double x = point.getX();
-		double y = point.getY();
-		double z = point.getZ();
-
-		double length = Math.sqrt(x*x + y*y + z*z);
-		return new Vertex3D(x/length, y/length, z/length, color);
+		return new Vertex3D(point.normalize(),  color);
 	}
 }

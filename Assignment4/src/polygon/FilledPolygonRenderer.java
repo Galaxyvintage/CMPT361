@@ -74,21 +74,21 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             }
 
             // Shading vertex color
-            Color c;
-            c = vertexShader.shade(LTopVertex.getColor());
-            LTopVertex = LTopVertex.replaceColor(c);
-
-            c = vertexShader.shade(LBotVertex.getColor());
-            LBotVertex = LBotVertex.replaceColor(c);
-
-            c = vertexShader.shade(RTopVertex.getColor());
-            RTopVertex = RTopVertex.replaceColor(c);
-
-            c = vertexShader.shade(RBotVertex.getColor());
-            RBotVertex = RBotVertex.replaceColor(c);
-
-            c = vertexShader.shade(MidVertex.getColor());
-            MidVertex = MidVertex.replaceColor(c);
+//            Color c;
+//            c = vertexShader.shade(LTopVertex.getColor());
+//            LTopVertex = LTopVertex.replaceColor(c);
+//
+//            c = vertexShader.shade(LBotVertex.getColor());
+//            LBotVertex = LBotVertex.replaceColor(c);
+//
+//            c = vertexShader.shade(RTopVertex.getColor());
+//            RTopVertex = RTopVertex.replaceColor(c);
+//
+//            c = vertexShader.shade(RBotVertex.getColor());
+//            RBotVertex = RBotVertex.replaceColor(c);
+//
+//            c = vertexShader.shade(MidVertex.getColor());
+//            MidVertex = MidVertex.replaceColor(c);
 
 
             // Left and Right RGB slopes and initial values

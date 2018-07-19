@@ -171,8 +171,7 @@ public class SimpInterpreter {
 		case "ambient" :	interpretAmbient(tokens);	break;
 		case "depth" :		interpretDepth(tokens);		break;
 		case "obj" :		interpretObj(tokens);		break;
-		case "light" : interpretLight(tokens);
-
+		case "light" :      interpretLight(tokens);     break;
 
 		default :
 			System.err.println("bad input line: " + tokens);
@@ -237,8 +236,14 @@ public class SimpInterpreter {
                 Lighting lighting = lightSources.get(i);
                 faceColor = faceColor.add(lighting.light(center, defaultColor, kSpecular, exponentSpecular));
             }
-            polygon.faceColor = faceColor;
-	        return polygon;
+
+            ArrayList<Vertex3D> vertices = new ArrayList<>();
+            for(int i = 0; i < polygon.length(); i++) {
+                Vertex3D v = polygon.get(i);
+                v = v.replaceColor(faceColor);
+                vertices.add(v);
+            }
+	        return Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
         };
 	}
 

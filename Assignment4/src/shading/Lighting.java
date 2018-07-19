@@ -23,14 +23,16 @@ public class Lighting {
     }
 
     public Color light(Vertex3D cameraSpacePoint, Color kDiffuse, double kSpecular, double specularExponent) {
-
         double fatti =  1 /  (A + B * cameraSpaceLocation.distance(cameraSpacePoint.getPoint3D()));
-        Point3DH L = cameraSpaceLocation.normalize();
-        Point3DH N = cameraSpacePoint.normalize().getPoint3D();
+        Point3DH l = cameraSpaceLocation.normalize();
+        Point3DH n = cameraSpacePoint.getNormal().normalize();
+        Point3DH r = n.scale(2 * n.dot(l)).subtract(l);
 
-
-        //        intensity.multiply(fatti).multiply()
-
-        return null;
+        double NL = n.dot(l);
+        double VR = cameraSpacePoint.getPoint3D().normalize().dot(r);
+        Color kDNL = kDiffuse.scale(NL);
+        double kSVRP = kSpecular * Math.pow(VR, specularExponent);
+        Color color = new Color(kDNL.getR() + kSVRP, kDNL.getG() + kSVRP, kDNL.getB() + kSVRP);
+        return intensity.scale(fatti).multiply(color);
     }
 }
