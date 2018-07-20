@@ -29,16 +29,29 @@ public class Lighting {
         n = n.normalize();
 
         double NL = n.dot(l);
+        if (NL <= 0) {
+            NL = 0;
+        }
+
+
         Point3DH r = n.scale(2 * NL).subtract(l).normalize();
         double VR = cameraSpacePoint.getPoint3D().normalize().dot(r);
+        if (VR <= 0) {
+            VR = 0;
+        }
+
+
+        Color color;
+        if(NL <= 0) {
+            color = Color.BLACK;
+        } else {
+            Color kDNL = kDiffuse.scale(NL);
+            double kSVRP = kSpecular * Math.pow(VR, specularExponent);
+            color = new Color(kDNL.getR() + kSVRP, kDNL.getG() + kSVRP, kDNL.getB() + kSVRP);
+        }
+
         double di = Math.abs(NL) / Math.abs(n.norm());
-        double fatti =  1 /  (A + B * di);
-
-        // TODO: negative dot products are treated as zero
-
-        Color kDNL = kDiffuse.scale(NL);
-        double kSVRP = kSpecular * Math.pow(VR, specularExponent);
-        Color color = new Color(kDNL.getR() + kSVRP, kDNL.getG() + kSVRP, kDNL.getB() + kSVRP);
+        double fatti =  1 / (A + B * di);
         return intensity.scale(fatti).multiply(color);
     }
 }

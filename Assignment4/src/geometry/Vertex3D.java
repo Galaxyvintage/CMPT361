@@ -126,6 +126,6 @@ public class Vertex3D implements Vertex {
 	}
 
 	public Vertex3D normalize() {
-		return new Vertex3D(point.normalize(), color);
+		return new Vertex3D(point.normalize(), cameraPoint, color);
 	}
 }

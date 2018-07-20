@@ -215,13 +215,12 @@ public class SimpInterpreter {
 	        Vertex3D center = new Vertex3D(point1.add(point2).add(point3).scale(1.0/3.0), Color.WHITE);
 	        Point3DH normal;
 
-	        // TODO : face normal
             if(v1.hasNormal() && v2.hasNormal() && v3.hasNormal()) {
                 Point3DH n1 = v1.getNormal();
                 Point3DH n2 = v2.getNormal();
                 Point3DH n3 = v3.getNormal();
-                Vertex3D n = new Vertex3D(n1.add(n2).add(n3).scale(1.0/3.0), Color.WHITE);
-                normal = n.normalize().getPoint3D();
+                Point3DH n = n1.add(n2).add(n3).scale(1.0/3.0);
+                normal = n.normalize();
             } else {
                 Point3DH a = point2.subtract(point1);
                 Point3DH b = point3.subtract(point1);
