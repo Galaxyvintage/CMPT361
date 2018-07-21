@@ -55,7 +55,6 @@ public class SimpInterpreter {
 	private Drawable drawable;
 	private Clipper clipper;
 
-    private Shader ambientShader;
     private FaceShader faceShader;
     private VertexShader vertexShader;
     private PixelShader pixelShader;
@@ -84,8 +83,9 @@ public class SimpInterpreter {
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
 		shaderStyle = ShaderStyle.FLAT;
-		ambientShader = c  -> ambientLight.multiply(c);
 		faceShader = polygon -> polygon;
+		vertexShader = (polygon, vertex) -> vertex;
+		pixelShader  = (polygon, vertex) -> vertex.getColor();
 	}
 
 	public Transformation getCTM() {
@@ -495,36 +495,10 @@ public class SimpInterpreter {
         }
 	}
 
-	public void polygon(Vertex3D p1, Vertex3D p2, Vertex3D p3) {
- 	    Polygon polygon = Polygon.make(p1, p2, p3);
-	    Polygon clipped = clipper.clipZ(polygon);
-
-	    if(clipped != null) {
-            ArrayList<Vertex3D> vertices = new ArrayList<>();
-            // transform clipped vertices
-            for (int i = 0; i < clipped.length(); i++) {
-                Vertex3D v = projectToScreen(clipped.get(i));
-                vertices.add(v);
-            }
-
-            polygon = Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
-            clipped = clipper.clipX(polygon);
-            if(clipped != null) {
-                clipped = clipper.clipY(clipped);
-            }
-
-            if(clipped != null) {
-                PolygonRenderer renderer;
-                if (renderStyle == RenderStyle.FILLED) {
-                    renderer = renderers.getFilledRenderer();
-                    renderer.drawPolygon(clipped, drawable, faceShader, ambientShader);
-                } else {
-                    renderer = renderers.getWireframeRenderer();
-                    renderer.drawPolygon(clipped, drawable);
-                }
-            }
-        }
-	}
+    public void polygon(Vertex3D v1, Vertex3D v2, Vertex3D v3) {
+	    Polygon p = Polygon.make(v1 ,v2, v3);
+	    polygon(p);
+    }
 
     public void polygon(Polygon polygon) {
         Polygon clipped = clipper.clipZ(polygon);
@@ -547,7 +521,7 @@ public class SimpInterpreter {
                 PolygonRenderer renderer;
                 if (renderStyle == RenderStyle.FILLED) {
                     renderer = renderers.getFilledRenderer();
-                    renderer.drawPolygon(clipped, drawable, faceShader, ambientShader);
+                    renderer.drawPolygon(clipped, drawable, faceShader, vertexShader, pixelShader);
                 } else {
                     renderer = renderers.getWireframeRenderer();
                     renderer.drawPolygon(clipped, drawable);

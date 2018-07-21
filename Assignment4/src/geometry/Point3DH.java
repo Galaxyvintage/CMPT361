@@ -40,12 +40,14 @@ public class Point3DH implements Point {
 	public int getIntZ() {
 		return (int) Math.round(z);
 	}
+
 	public Point3DH round() {
 		double newX = Math.round(x);
 		double newY = Math.round(y);
 		double newZ = Math.round(z);
 		return new Point3DH(newX, newY, newZ);
 	}
+
 	public Point3DH add(Point point) {
 		Point3DH other = (Point3DH)point;
 		double newX = x + other.getX();
@@ -53,6 +55,7 @@ public class Point3DH implements Point {
 		double newZ = z + other.getZ();
 		return new Point3DH(newX, newY, newZ);
 	}
+
 	public Point3DH subtract(Point point) {
 		Point3DH other = (Point3DH)point;
 		double newX = x - other.getX();
@@ -60,12 +63,14 @@ public class Point3DH implements Point {
 		double newZ = z - other.getZ();
 		return new Point3DH(newX, newY, newZ);
 	}
+
 	public Point3DH scale(double scalar) {
 		double newX = x * scalar;
 		double newY = y * scalar;
 		double newZ = z * scalar;
 		return new Point3DH(newX, newY, newZ);
 	}
+
 	public double  norm() {
 		return Math.sqrt((x/w) * (x/w) + (y/w) * (y/w) + (z/w) * (z/w));
 	}
@@ -80,13 +85,16 @@ public class Point3DH implements Point {
 	public double dot(Point3DH other) {
 	    return x*other.getX() + y*other.getY() + z*other.getZ();
     }
+
     public Point3DH normalize() {
         double length = norm();
         return new Point3DH(x/length, y/length, z/length);
     }
-	public String toString() {
+
+    public String toString() {
 		return "[" + x + " " + y + " " + z + " " + w + "]t";
 	}
+
 	public Point3DH euclidean() {
 		if(w == 0) {
 			w = .000000001;

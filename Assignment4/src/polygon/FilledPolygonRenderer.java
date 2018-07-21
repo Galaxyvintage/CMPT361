@@ -3,6 +3,8 @@ package polygon;
 import geometry.Point3DH;
 import geometry.Vertex3D;
 import shading.FaceShader;
+import shading.PixelShader;
+import shading.VertexShader;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
 import shading.Shader;
@@ -19,7 +21,11 @@ public class FilledPolygonRenderer implements PolygonRenderer {
     public static FilledPolygonRenderer make() { return new FilledPolygonRenderer();}
 
     // TODO: Need to optimize and clean up
-    public void drawPolygon(Polygon polygon, Drawable drawable, FaceShader faceShader, Shader vertexShader) {
+    public void drawPolygon(Polygon polygon,
+                            Drawable drawable,
+                            FaceShader faceShader,
+                            VertexShader vertexShader,
+                            PixelShader pixelShader) {
 
         ArrayList<Polygon> polygons = polygon.triangulate();
 
