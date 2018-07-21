@@ -209,10 +209,10 @@ public class SimpInterpreter {
             Vertex3D v2= polygon.get(1);
             Vertex3D v3= polygon.get(2);
 
-            Point3DH point1 = v1.getCameraPoint().euclidean();
-            Point3DH point2 = v2.getCameraPoint().euclidean();
-	        Point3DH point3 = v3.getCameraPoint().euclidean();
-	        Vertex3D center = new Vertex3D(point1.add(point2).add(point3).scale(1.0/3.0), Color.WHITE);
+            Point3DH point1 = v1.getCameraPoint();//.euclidean();
+            Point3DH point2 = v2.getCameraPoint();//.euclidean();
+	        Point3DH point3 = v3.getCameraPoint();//.euclidean();
+	        Vertex3D center = new Vertex3D(point1.add(point2).add(point3).scale(1.0/3.0), Color.BLACK);
 	        Point3DH normal;
 
             if(v1.hasNormal() && v2.hasNormal() && v3.hasNormal()) {

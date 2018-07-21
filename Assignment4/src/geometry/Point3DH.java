@@ -67,8 +67,7 @@ public class Point3DH implements Point {
 		return new Point3DH(newX, newY, newZ);
 	}
 	public double  norm() {
-		double length = Math.sqrt((x/w)*(x/w) + (y/w)*(y/w) + (z/w)*(z/w));
-		return length;
+		return Math.sqrt((x/w) * (x/w) + (y/w) * (y/w) + (z/w) * (z/w));
 	}
 
 	public Point3DH cross(Point3DH other) {
