@@ -33,9 +33,9 @@ public class Lighting {
             NL = 0;
         }
 
-        Point3DH r = (n.scale(-2 * NL)).subtract(l).normalize();
+        Point3DH r = (n.scale(2 * NL)).subtract(l).normalize();
 
-        double VR = cameraSpacePoint.getPoint3D().normalize().dot(r);
+        double VR = cameraSpacePoint.getPoint3D().scale(-1).normalize().dot(r);
         if (VR <= 0) {
             VR = 0;
         }
