@@ -118,7 +118,11 @@ public class Transformation {
         double newY = t[1][0] * x + t[1][1] * y + t[1][2] * z + t[1][3] * w;
         double newZ = t[2][0] * x + t[2][1] * y + t[2][2] * z + t[2][3] * w;
         double newW = t[3][0] * x + t[3][1] * y + t[3][2] * z + t[3][3] * w;
-        return new Vertex3D(new Point3DH(newX, newY, newZ, newW), v.getColor());
+        Vertex3D newV = new Vertex3D(new Point3DH(newX, newY, newZ, newW), v.getColor());
+        if(v.hasNormal()) {
+            newV.setNormal(v.getNormal());
+        }
+        return newV;
     }
 
     // TODO: Fix preMultiply and postMultiply to reflect the actuual operation lol...right now A.preMulitply(B) means B * A

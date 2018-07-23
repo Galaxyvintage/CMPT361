@@ -3,10 +3,7 @@ package client.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.RendererTrio;
-import com.sun.scenario.effect.impl.Renderer;
 import geometry.Point3DH;
-import geometry.Vertex;
 import geometry.Vertex3D;
 import polygon.Polygon;
 import windowing.graphics.Color;
@@ -84,6 +81,10 @@ class ObjReader {
         Polygon result = Polygon.makeEmpty();
         for(ObjVertex objVertex: face) {
             Vertex3D vertex = transformedVertices.get(objVertex.getVertexIndex() - 1);
+//            if(objVertex.getNormalIndex() != 0) {
+                Point3DH normal = transformedNormals.get(objVertex.getNormalIndex() - 1);
+                vertex.setNormal(normal);
+//            }
             result.add(vertex);
         }
 		return result;

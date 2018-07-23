@@ -1,4 +1,5 @@
 {
+	gouraud
 	ambient 0.25 0.25 0.25
 	{
 		translate 0 25 -32

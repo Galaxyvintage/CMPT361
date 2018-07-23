@@ -87,8 +87,14 @@ public class Point3DH implements Point {
     }
 
     public Point3DH normalize() {
-        double length = norm();
-        return new Point3DH(x/length, y/length, z/length);
+        Point3DH point;
+		double length = norm();
+        if(length > 0) {
+			point = new Point3DH(x / length, y / length, z / length);
+		} else {
+        	point = new Point3DH(x, y, z);
+		}
+		return point;
     }
 
     public String toString() {
