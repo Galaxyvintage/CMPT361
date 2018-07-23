@@ -198,15 +198,16 @@ class ObjReader {
 
 	private void transformVertices(SimpInterpreter interpreter) {
 	    for(Vertex3D vertex: objVertices) {
-	        Vertex3D v = interpreter.getCTM().multiplyVertex(vertex);
+	        Vertex3D v = interpreter.getCTM().multiplyVertex(vertex).euclidean();
+	        // TODO: transform camera space point
 	        transformedVertices.add(v);
         }
     }
 
     private void transformNormals(SimpInterpreter interpreter) {
         for(Point3DH point: objNormals) {
-            Point3DH p = interpreter.getCTM().multiplyPoint(point);
-            transformedNormals.add(p);
+            Point3DH p = interpreter.getCTM().multiplyPoint(point).euclidean();
+            transformedNormals.add(point);
         }
     }
 }

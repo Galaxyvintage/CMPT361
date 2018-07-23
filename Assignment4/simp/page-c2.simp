@@ -6,7 +6,7 @@
 		{
 			translate 8 10 -40
 			light 1, 1, 1, 1, 0
-#			file "lightMarker"
+			file "lightMarker"
 		}
 		ambient .05 .05 .05
 	}
