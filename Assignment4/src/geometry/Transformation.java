@@ -90,6 +90,16 @@ public class Transformation {
         return result;
     }
 
+    public Transformation transpose() {
+        Transformation t = new Transformation();
+        for(int i = 0; i < MATRIX_SIZE; i++) {
+            for(int j = 0; j < MATRIX_SIZE; j++) {
+                t.transformationMatrix[i][j] = this.transformationMatrix[j][i];
+            }
+        }
+        return t;
+    }
+
     public Point3DH multiplyPoint(Point3DH p) {
         double[][] t = this.transformationMatrix;
 

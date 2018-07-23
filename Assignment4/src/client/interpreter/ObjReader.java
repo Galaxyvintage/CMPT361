@@ -206,8 +206,8 @@ class ObjReader {
 
     private void transformNormals(SimpInterpreter interpreter) {
         for(Point3DH point: objNormals) {
-            Point3DH p = interpreter.getCTM().multiplyPoint(point).euclidean();
-            transformedNormals.add(point);
+            Point3DH p = interpreter.getCTM().adjoint().transpose().multiplyPoint(point).euclidean();
+            transformedNormals.add(p);
         }
     }
 }
