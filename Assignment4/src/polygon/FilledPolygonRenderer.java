@@ -7,7 +7,7 @@ import shading.PixelShader;
 import shading.VertexShader;
 import windowing.drawable.Drawable;
 import windowing.graphics.Color;
-import shading.Shader;
+
 
 import java.util.ArrayList;
 
@@ -56,17 +56,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             Vertex3D MidVertex;
 
             int MidVertexSide;
-            double LSlope;
-            double RSlope;
-            double LZSlope;
-            double RZSlope;
-
-            double LX = LTopVertex.getIntX();
-            double RX = RTopVertex.getIntX();
-            double LZ = LTopVertex.getZ();
-            double RZ = LTopVertex.getZ();
-
-
             // Finding which vertex is the mid vertex
             if (LLength > RLength) {
                 MidVertexSide = LEFT;
@@ -79,22 +68,22 @@ public class FilledPolygonRenderer implements PolygonRenderer {
                 MidVertex = LTopVertex;
             }
 
-//            //Shading vertex color
-//            Color c;
-//            c = vertexShader.shade(LTopVertex.getColor());
-//            LTopVertex = LTopVertex.replaceColor(c);
-//
-//            c = vertexShader.shade(LBotVertex.getColor());
-//            LBotVertex = LBotVertex.replaceColor(c);
-//
-//            c = vertexShader.shade(RTopVertex.getColor());
-//            RTopVertex = RTopVertex.replaceColor(c);
-//
-//            c = vertexShader.shade(RBotVertex.getColor());
-//            RBotVertex = RBotVertex.replaceColor(c);
-//
-//            c = vertexShader.shade(MidVertex.getColor());
-//            MidVertex = MidVertex.replaceColor(c);
+            LTopVertex = vertexShader.shade(currentPolygon, LTopVertex);
+            LBotVertex = vertexShader.shade(currentPolygon, LBotVertex);
+            RTopVertex = vertexShader.shade(currentPolygon, RTopVertex);
+            RBotVertex = vertexShader.shade(currentPolygon, RBotVertex);
+            MidVertex = vertexShader.shade(currentPolygon, MidVertex);
+
+
+            double LSlope;
+            double RSlope;
+            double LZSlope;
+            double RZSlope;
+
+            double LX = LTopVertex.getIntX();
+            double RX = RTopVertex.getIntX();
+            double LZ = LTopVertex.getZ();
+            double RZ = LTopVertex.getZ();
 
 
             // Left and Right RGB slopes and initial values
@@ -106,7 +95,6 @@ public class FilledPolygonRenderer implements PolygonRenderer {
             double RRed = RTopVertex.getColor().getR();
             double RGreen = RTopVertex.getColor().getG();
             double RBlue = RTopVertex.getColor().getB();
-
 
             double LDeltaX, LDeltaY, LDeltaZ;
             double LDeltaR, LDeltaG, LDeltaB;

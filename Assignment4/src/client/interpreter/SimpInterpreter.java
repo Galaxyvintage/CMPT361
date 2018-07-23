@@ -157,7 +157,7 @@ public class SimpInterpreter {
 		case "wire" :   wire();    break;
 		case "filled" : filled();  break;
 //		case "phong":   phong();   break;
-//		case "gouraud": gouraud(); break;
+		case "gouraud": gouraud(); break;
 		case "flat":    flat();    break;
 
 		case "file" :		interpretFile(tokens);		break;
@@ -244,6 +244,38 @@ public class SimpInterpreter {
 	        return Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
         };
 	}
+
+	private void gouraud() {
+        shaderStyle = ShaderStyle.GOURAUD;
+        vertexShader = (polygon, vertex) -> {
+            Point3DH normal;
+
+            if(vertex.hasNormal()) {
+                normal = vertex.getNormal();
+            } else {
+                Point3DH point1 = polygon.get(0).getCameraPoint();
+                Point3DH point2 = polygon.get(1).getCameraPoint();
+                Point3DH point3 = polygon.get(2).getCameraPoint();
+
+                Point3DH a = point2.subtract(point1);
+                Point3DH b = point3.subtract(point1);
+                Point3DH n = a.cross(b);
+                normal = n.normalize();
+            }
+
+            Vertex3D vertexCameraSpace = new Vertex3D(vertex.getCameraPoint(), Color.BLACK);
+            vertexCameraSpace.setNormal(normal);
+
+            Color vertexColor = ambientLight.multiply(defaultColor);
+            for(int i = 0; i < lightSources.size(); i++) {
+                Lighting lighting = lightSources.get(i);
+                vertexColor = vertexColor.add(lighting.light(vertexCameraSpace, defaultColor, kSpecular, specularExponent));
+            }
+
+            vertex = vertex.replaceColor(vertexColor);
+            return vertex;
+        };
+    }
 
 	// this one is complete.
 	private void interpretFile(String[] tokens) {
