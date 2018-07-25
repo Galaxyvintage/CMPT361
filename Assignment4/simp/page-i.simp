@@ -1,16 +1,22 @@
 {
-	ambient 1 0.75 0.75
+	ambient 0.5 0 0
 	{
-		translate 0 25 -32
-		rotate Y -55
-		rotate X -20
-		camera  -1 -1 0 0 -0.1 -200
-		depth 0 -150 (0 0 0)
+		translate 0 60 50
+		camera  -1 -1 1 1 -0.1 -300
+		depth 0 -200 (0 0 0)
 	}
-	
-#	wire
+
+    {
+    	translate -20, 70, 50
+    	light .5, .5, .5, 1, 0
+    }
+
+
 	{
-		translate 0 0 -20
-		file "stripeGrid"
+	    rotate X 20
+	    rotate Y 70
+	    translate 0 -5 0
+	    scale 2.0 2.0 2.0
+		obj "2b"
 	}
 }

@@ -82,8 +82,8 @@ public class SimpInterpreter {
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
-        shadingStyle = ShadingStyle.FLAT;
-        flat();
+        shadingStyle = ShadingStyle.PHONG;
+        phong();
 	}
 
 	public Transformation getCTM() {
