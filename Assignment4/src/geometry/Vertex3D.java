@@ -2,8 +2,17 @@ package geometry;
 
 import windowing.graphics.Color;
 
+import java.util.ArrayList;
+
 public class Vertex3D implements Vertex {
 
+    public enum Interpolant {
+        VERTEX_COLOR,
+        NORMAL,
+        CAMERASPACE,
+    }
+
+    public ArrayList<Interpolant> interpolants = new ArrayList<>();
 	protected Point3DH point;
 	protected Point3DH cameraPoint;
 	protected Color color;
@@ -107,6 +116,7 @@ public class Vertex3D implements Vertex {
 		if(this.hasNormal) {
 			v.setNormal(this.normal);
 		}
+        v.interpolants = this.interpolants;
 		return v;
 	}
 	public Vertex3D replaceColor(Color newColor) {
@@ -114,6 +124,7 @@ public class Vertex3D implements Vertex {
 		if(this.hasNormal) {
 			v.setNormal(this.normal);
 		}
+		v.interpolants = this.interpolants;
 		return v;
 	}
 
@@ -122,6 +133,7 @@ public class Vertex3D implements Vertex {
 		if(this.hasNormal) {
 			v.setNormal(this.normal);
 		}
+        v.interpolants = this.interpolants;
 		return v;
     }
 
@@ -142,6 +154,7 @@ public class Vertex3D implements Vertex {
 		if(this.hasNormal) {
 			v.setNormal(this.normal);
 		}
+        v.interpolants = this.interpolants;
 		return v;
 	}
 }

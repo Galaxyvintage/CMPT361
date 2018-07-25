@@ -12,7 +12,7 @@ public class Polygon extends Chain {
 	private static final int INDEX_STEP_FOR_COUNTERCLOCKWISE = 1;
     public double kSpecular;
     public double specularExponent;
-	public Color faceColor;
+	public Color faceColor = Color.WHITE;
 
 	private Polygon(Vertex3D... initialVertices) {
 		super(initialVertices);
@@ -178,7 +178,8 @@ public class Polygon extends Chain {
             for(int i = 1; i < this.length() - 1; i++) {
                 Vertex3D v1 = this.get(i);
                 Vertex3D v2 = this.get(i+1);
-                polygons.add(Polygon.make(anchor, v1, v2));
+                Polygon p = Polygon.make(anchor, v1, v2);
+                polygons.add(p);
             }
         } else {
             polygons.add(this);

@@ -1,6 +1,7 @@
 package polygon;
 
 
+import client.interpreter.SimpInterpreter;
 import geometry.Vertex;
 import geometry.Vertex3D;
 import line.LineRenderer;
@@ -22,7 +23,8 @@ public class WireFrameRenderer implements PolygonRenderer {
                             Drawable drawable,
                             FaceShader faceShader,
                             VertexShader vertexShader,
-                            PixelShader pixelShader){
+                            PixelShader pixelShader,
+                            SimpInterpreter.ShadingStyle shadingStyle){
         for(int i = 0; i < polygon.numVertices; i++) {
             Vertex3D p1 = polygon.get(i);
             Vertex3D p2 = polygon.get(i + 1);

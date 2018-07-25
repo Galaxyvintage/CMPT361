@@ -81,10 +81,10 @@ class ObjReader {
         Polygon result = Polygon.makeEmpty();
         for(ObjVertex objVertex: face) {
             Vertex3D vertex = transformedVertices.get(objVertex.getVertexIndex() - 1);
-//            if(objVertex.getNormalIndex() != 0) {
+            if(objVertex.getNormalIndex() != 0) {
                 Point3DH normal = transformedNormals.get(objVertex.getNormalIndex() - 1);
                 vertex.setNormal(normal);
-//            }
+            }
             result.add(vertex);
         }
 		return result;
@@ -206,7 +206,7 @@ class ObjReader {
 
     private void transformNormals(SimpInterpreter interpreter) {
         for(Point3DH point: objNormals) {
-            Point3DH p = interpreter.getCTM().adjoint().transpose().multiplyPoint(point).euclidean();
+            Point3DH p = interpreter.getCTM().adjoint().transpose().multiplyPoint(point);
             transformedNormals.add(p);
         }
     }

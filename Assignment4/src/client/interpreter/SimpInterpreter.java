@@ -36,7 +36,7 @@ public class SimpInterpreter {
 
 	private double kSpecular = 0.3;
 	private double specularExponent = 8;
-    private ShaderStyle shaderStyle;
+    private ShadingStyle shadingStyle;
 
     private Transformation CTM = Transformation.identity();
     private Transformation worldToView = Transformation.identity();
@@ -65,7 +65,7 @@ public class SimpInterpreter {
 	}
 
     public enum
-    ShaderStyle {
+    ShadingStyle {
         FLAT,
         GOURAUD,
         PHONG;
@@ -82,10 +82,8 @@ public class SimpInterpreter {
 		reader = new LineBasedReader(filename);
 		readerStack = new Stack<>();
 		renderStyle = RenderStyle.FILLED;
-		shaderStyle = ShaderStyle.FLAT;
-		faceShader = polygon -> polygon;
-		vertexShader = (polygon, vertex) -> vertex;
-		pixelShader  = (polygon, vertex) -> vertex.getColor();
+        shadingStyle = ShadingStyle.FLAT;
+        flat();
 	}
 
 	public Transformation getCTM() {
@@ -156,7 +154,7 @@ public class SimpInterpreter {
 		case "}" :      pop();     break;
 		case "wire" :   wire();    break;
 		case "filled" : filled();  break;
-//		case "phong":   phong();   break;
+		case "phong":   phong();   break;
 		case "gouraud": gouraud(); break;
 		case "flat":    flat();    break;
 
@@ -203,7 +201,7 @@ public class SimpInterpreter {
 	}
 
 	private void flat() {
-	    shaderStyle = ShaderStyle.FLAT;
+        shadingStyle = ShadingStyle.FLAT;
 	    faceShader = polygon -> {
 	        Vertex3D v1= polygon.get(0);
             Vertex3D v2= polygon.get(1);
@@ -239,14 +237,20 @@ public class SimpInterpreter {
             for(int i = 0; i < polygon.length(); i++) {
                 Vertex3D v = polygon.get(i);
                 v = v.replaceColor(faceColor);
+                v.interpolants.clear();
                 vertices.add(v);
             }
-	        return Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
+	        Polygon p = Polygon.make(vertices.toArray(new Vertex3D[vertices.size()]));
+            p.faceColor = faceColor;
+            return p;
         };
+	    vertexShader = (polygon, vertex) -> vertex;
+	    pixelShader = (polygon, vertex) -> polygon.faceColor;
 	}
 
 	private void gouraud() {
-        shaderStyle = ShaderStyle.GOURAUD;
+        shadingStyle = ShadingStyle.GOURAUD;
+        faceShader = polygon -> polygon;
         vertexShader = (polygon, vertex) -> {
             Point3DH normal;
 
@@ -273,7 +277,50 @@ public class SimpInterpreter {
             }
 
             vertex = vertex.replaceColor(vertexColor);
+            vertex.interpolants.clear();
+            vertex.interpolants.add(Vertex3D.Interpolant.VERTEX_COLOR);
             return vertex;
+        };
+        pixelShader = (polygon, vertex) -> vertex.getColor();
+    }
+
+    private void phong() {
+        shadingStyle = ShadingStyle.PHONG;
+        faceShader = polygon -> polygon;
+        vertexShader = (polygon, vertex) -> {
+            Point3DH normal;
+
+            vertex.interpolants.clear();
+            if(vertex.hasNormal()) {
+                normal = vertex.getNormal();
+                vertex.interpolants.add(Vertex3D.Interpolant.NORMAL);
+            } else {
+                Point3DH point1 = polygon.get(0).getCameraPoint();
+                Point3DH point2 = polygon.get(1).getCameraPoint();
+                Point3DH point3 = polygon.get(2).getCameraPoint();
+
+                Point3DH a = point2.subtract(point1);
+                Point3DH b = point3.subtract(point1);
+                Point3DH n = a.cross(b);
+                normal = n.normalize();
+            }
+            vertex.setNormal(normal);
+
+            Vertex3D vertexCameraSpace = new Vertex3D(vertex.getCameraPoint(), Color.BLACK);
+            vertex.interpolants.add(Vertex3D.Interpolant.VERTEX_COLOR);
+            vertex.interpolants.add(Vertex3D.Interpolant.CAMERASPACE);
+            return vertex;
+        };
+        pixelShader = (polygon, vertex) -> {
+            Color vertexColor = ambientLight.multiply(vertex.getColor());
+            Vertex3D vertexCameraSpace = new Vertex3D(vertex.getCameraPoint(), vertex.getColor());
+            vertexCameraSpace.setNormal(vertex.getNormal());
+
+            for(int i = 0; i < lightSources.size(); i++) {
+                Lighting lighting = lightSources.get(i);
+                vertexColor = vertexColor.add(lighting.light(vertexCameraSpace, vertex.getColor(), kSpecular, specularExponent));
+            }
+            return vertexColor;
         };
     }
 
@@ -553,7 +600,7 @@ public class SimpInterpreter {
                 PolygonRenderer renderer;
                 if (renderStyle == RenderStyle.FILLED) {
                     renderer = renderers.getFilledRenderer();
-                    renderer.drawPolygon(clipped, drawable, faceShader, vertexShader, pixelShader);
+                    renderer.drawPolygon(clipped, drawable, faceShader, vertexShader, pixelShader, shadingStyle);
                 } else {
                     renderer = renderers.getWireframeRenderer();
                     renderer.drawPolygon(clipped, drawable);
