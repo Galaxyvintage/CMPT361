@@ -48,8 +48,8 @@ public class Lighting {
             double kSVRP = kSpecular * Math.pow(VR, specularExponent);
             color = new Color(kDNL.getR() + kSVRP, kDNL.getG() + kSVRP, kDNL.getB() + kSVRP);
         }
-        double di = Math.abs(NL) / Math.abs(n.norm());
-        double fatti =  1 / (A + B * di);
+        double di = l.norm();
+        double fatti = 1 / (A + B * di);
         return (intensity.scale(fatti)).multiply(color);
     }
 }

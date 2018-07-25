@@ -293,7 +293,6 @@ public class SimpInterpreter {
             vertex.interpolants.clear();
             if(vertex.hasNormal()) {
                 normal = vertex.getNormal();
-                vertex.interpolants.add(Vertex3D.Interpolant.NORMAL);
             } else {
                 Point3DH point1 = polygon.get(0).getCameraPoint();
                 Point3DH point2 = polygon.get(1).getCameraPoint();
@@ -305,17 +304,17 @@ public class SimpInterpreter {
                 normal = n.normalize();
             }
             vertex.setNormal(normal);
-
-            Vertex3D vertexCameraSpace = new Vertex3D(vertex.getCameraPoint(), Color.BLACK);
+            vertex.interpolants.add(Vertex3D.Interpolant.NORMAL);
             vertex.interpolants.add(Vertex3D.Interpolant.VERTEX_COLOR);
             vertex.interpolants.add(Vertex3D.Interpolant.CAMERASPACE);
             return vertex;
         };
         pixelShader = (polygon, vertex) -> {
-            Color vertexColor = ambientLight.multiply(vertex.getColor());
+
             Vertex3D vertexCameraSpace = new Vertex3D(vertex.getCameraPoint(), vertex.getColor());
             vertexCameraSpace.setNormal(vertex.getNormal());
 
+            Color vertexColor = ambientLight.multiply(vertex.getColor());
             for(int i = 0; i < lightSources.size(); i++) {
                 Lighting lighting = lightSources.get(i);
                 vertexColor = vertexColor.add(lighting.light(vertexCameraSpace, vertex.getColor(), kSpecular, specularExponent));
