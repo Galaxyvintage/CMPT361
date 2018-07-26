@@ -77,7 +77,7 @@ public class Client implements PageTurner {
 		String filename;
 
 		switch(pageNumber) {
-			case 1:  filename = "page-i";	 break;
+			case 1:  filename = "page-a1";	 break;
 			case 2:  filename = "page-a2";	 break;
 			case 3:	 filename = "page-a3";	 break;
 			case 4:  filename = "page-b1";	 break;
