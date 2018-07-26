@@ -1,20 +1,18 @@
-### Assignment 3
-Deadline: July 12 2018
+### Assignment 4
+Deadline: Aug 2 2018
 
 #### Requirement
 * Java 1.8 (both JDK and JRE)
 
 #### How to run
-* In directory `/Assignment3` run the following commands in order:
+* In directory `/Assignment4` run the following commands in order:
     1. `javac -cp ./src ./src/client/Main.java`
     2. `java -cp ./src client.Main [filename]`
 
 #### Finished
-* Matrix inversion for the camera command
-* Perspective transformation
-* Clipper(clipping Z in 3D/clipping XY in 2D)
-* Perspective-correct linear interpolation on Z values
-* Surface color and ambient light
+* Flat shading
+* Gouraud shading
+* Phong shading  
 * Custom obj files
 
 #### Non Finished
